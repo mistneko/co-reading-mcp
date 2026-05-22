@@ -64,19 +64,21 @@ For Claude Desktop / Claude Code, configure the MCP server as a stdio command:
 }
 ```
 
-## Remote SSE Transport
+## Remote Server
 
-For VPS, reverse-proxy, tunnel, or remote MCP clients that support SSE transport, run:
+For VPS, reverse-proxy, tunnel, or remote MCP clients, run one process:
 
 ```bash
 READING_MCP_DATA_DIR=./data MCP_AUTH_TOKEN="change-me" npm run start:sse
 ```
 
-The SSE endpoint is:
+The same port serves the human reader, REST API, and remote MCP transports:
 
-```text
-https://your-domain.example/sse
-```
+- `https://your-domain.example/`: reference reader UI
+- `https://your-domain.example/?token=change-me`: reader UI with API auth saved in local storage
+- `https://your-domain.example/api/*`: reader REST API
+- `https://your-domain.example/sse`: MCP SSE transport
+- `https://your-domain.example/mcp`: MCP JSON-RPC over POST
 
 Environment variables:
 
@@ -86,7 +88,7 @@ Environment variables:
 - `MCP_CORS_ORIGIN`: CORS origin, default `*`
 - `MCP_MAX_BODY_BYTES`: max JSON-RPC POST body size, default `1000000`
 
-Do not expose the SSE server on the public internet without HTTPS and `MCP_AUTH_TOKEN`. If you use nginx, Caddy, or cloudflared, proxy `/sse` and `/messages` to the same local process and make sure streaming responses are not buffered.
+Do not expose the remote server on the public internet without HTTPS and `MCP_AUTH_TOKEN`. Static reader files are public, but `/api/*`, `/sse`, `/messages`, `/mcp`, and `/health` require the bearer token when `MCP_AUTH_TOKEN` is set. If you use nginx, Caddy, or cloudflared, proxy `/`, `/api/*`, `/sse`, `/messages`, and `/mcp` to the same local process and make sure streaming responses are not buffered.
 
 ## Import Books
 

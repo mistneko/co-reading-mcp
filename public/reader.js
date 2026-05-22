@@ -6,13 +6,24 @@ const state = {
   chunkId: null,
   chunk: null,
   quote: "",
+  refreshInFlight: false,
 };
 
 const $ = (id) => document.getElementById(id);
+const authTokenKey = "co-reading-auth-token";
+const urlToken = new URLSearchParams(location.search).get("token");
+if (urlToken) {
+  localStorage.setItem(authTokenKey, urlToken);
+  history.replaceState(null, "", location.pathname);
+}
 
 async function api(path, options = {}) {
+  const token = localStorage.getItem(authTokenKey);
   const response = await fetch(path, {
-    headers: { "content-type": "application/json" },
+    headers: {
+      "content-type": "application/json",
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    },
     ...options,
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
@@ -134,14 +145,20 @@ function openNoteForm(quote) {
 }
 
 async function refreshCurrent() {
-  await loadBooks();
-  if (state.bookId) {
-    state.chunks = await api(`/api/books/${encodeURIComponent(state.bookId)}/chunks`);
-    state.annotations = await api(`/api/annotations?bookId=${encodeURIComponent(state.bookId)}`);
-    renderBooks();
-    renderChunks();
-    renderText();
-    renderAnnotations();
+  if (state.refreshInFlight) return;
+  state.refreshInFlight = true;
+  try {
+    await loadBooks();
+    if (state.bookId) {
+      state.chunks = await api(`/api/books/${encodeURIComponent(state.bookId)}/chunks`);
+      state.annotations = await api(`/api/annotations?bookId=${encodeURIComponent(state.bookId)}`);
+      renderBooks();
+      renderChunks();
+      renderText();
+      renderAnnotations();
+    }
+  } finally {
+    state.refreshInFlight = false;
   }
 }
 
@@ -208,3 +225,7 @@ function showError(error) {
 }
 
 loadBooks().catch(showError);
+setInterval(() => {
+  if (document.hidden) return;
+  refreshCurrent().catch(showError);
+}, 5000);

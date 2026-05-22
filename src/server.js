@@ -223,7 +223,12 @@ export async function handle(message) {
       protocolVersion,
       serverInfo: { name: "co-reading-mcp", version: "0.1.0" },
       capabilities: { tools: {} },
-      instructions: `Use this server to read chunked books, search passages, track progress, and leave margin annotations. Data dir: ${dataDir}`,
+      instructions:
+        `Use this server as a shared co-reading surface. ` +
+        `Claude can read chunked books, search passages, track progress, leave margin annotations, ` +
+        `reply under user notes, and call reading_submit_user_notes when the human sends staged notes. ` +
+        `If this server is running through src/server-sse.js, the same process can also serve the human reader at /, REST API at /api/*, SSE MCP at /sse, and JSON-RPC POST at /mcp. ` +
+        `Data dir: ${dataDir}`,
     });
   }
 

@@ -301,10 +301,11 @@ function httpMcpRequest(method, params) {
 }
 
 async function fetchJson(pathname, options) {
-  const response = await fetch(`http://127.0.0.1:${httpPort}${pathname}`, {
-    headers: { "content-type": "application/json" },
-    ...options,
-    body: options?.body ? JSON.stringify(options.body) : undefined,
+  const { baseUrl = `http://127.0.0.1:${httpPort}`, headers = {}, ...fetchOptions } = options || {};
+  const response = await fetch(`${baseUrl}${pathname}`, {
+    headers: { "content-type": "application/json", ...headers },
+    ...fetchOptions,
+    body: fetchOptions.body ? JSON.stringify(fetchOptions.body) : undefined,
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || response.statusText);
@@ -403,6 +404,18 @@ async function waitForSseEvent(type) {
 
 const endpointEvent = await waitForSseEvent("endpoint");
 const endpoint = new URL(endpointEvent.data);
+const sseReaderHtml = await fetch(`http://127.0.0.1:${ssePort}/`);
+const sseApiUnauthorized = await fetch(`http://127.0.0.1:${ssePort}/api/books`);
+const sseApiBooks = await fetchJson("/api/books", {
+  baseUrl: `http://127.0.0.1:${ssePort}`,
+  headers: { Authorization: "Bearer smoke-token" },
+});
+const sseMcpPost = await fetch(`http://127.0.0.1:${ssePort}/mcp`, {
+  method: "POST",
+  headers: { "content-type": "application/json", Authorization: "Bearer smoke-token" },
+  body: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "initialize" }),
+});
+const sseMcpMessage = await sseMcpPost.json();
 const ssePost = await fetch(`http://127.0.0.1:${ssePort}${endpoint.pathname}${endpoint.search}`, {
   method: "POST",
   headers: { "content-type": "application/json", Authorization: "Bearer smoke-token" },
@@ -475,6 +488,18 @@ if (!httpNote.id) {
 }
 if (!readerHtml.ok || !(await readerHtml.text()).includes("Co-Reading")) {
   throw new Error("HTTP reader did not serve the web UI");
+}
+if (!sseReaderHtml.ok || !(await sseReaderHtml.text()).includes("Co-Reading")) {
+  throw new Error("SSE process did not serve the reader UI");
+}
+if (sseApiUnauthorized.status !== 401) {
+  throw new Error("SSE process did not protect REST API with MCP_AUTH_TOKEN");
+}
+if (!sseApiBooks.some((book) => book.bookId === "anthropic-guidelines")) {
+  throw new Error("SSE process did not serve authenticated REST API");
+}
+if (!sseMcpPost.ok || sseMcpMessage.result?.serverInfo?.name !== "co-reading-mcp") {
+  throw new Error("SSE process did not serve MCP JSON-RPC POST endpoint");
 }
 if (ssePost.status !== 202) {
   throw new Error("SSE message endpoint did not accept JSON-RPC");

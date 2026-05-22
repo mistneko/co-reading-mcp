@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dataDir } from "./store.js";
 import { handle } from "./server.js";
+import { handleApi, readBody, sendError, sendJson, serveStatic } from "./http-routes.js";
 
 const port = Number(process.env.MCP_SSE_PORT || process.env.PORT || 3100);
 const host = process.env.MCP_SSE_HOST || "0.0.0.0";
@@ -11,11 +12,6 @@ const authToken = process.env.MCP_AUTH_TOKEN || "";
 const corsOrigin = process.env.MCP_CORS_ORIGIN || "*";
 const maxBodyBytes = Number(process.env.MCP_MAX_BODY_BYTES || 1_000_000);
 const sessions = new Map();
-
-function sendJson(res, status, value) {
-  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
-  res.end(JSON.stringify(value));
-}
 
 function sendSse(res, event, data) {
   res.write(`event: ${event}\n`);
@@ -28,23 +24,10 @@ function setCors(res) {
   res.setHeader("access-control-allow-headers", "content-type, authorization");
 }
 
-function authorized(req) {
+function authorized(req, url) {
   if (!authToken) return true;
-  return req.headers.authorization === `Bearer ${authToken}`;
-}
-
-async function readJsonBody(req) {
-  const chunks = [];
-  let size = 0;
-  for await (const chunk of req) {
-    size += chunk.length;
-    if (size > maxBodyBytes) {
-      throw new Error(`Request body exceeds ${maxBodyBytes} bytes`);
-    }
-    chunks.push(chunk);
-  }
-  if (!chunks.length) throw new Error("Missing JSON body");
-  return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  if (req.headers.authorization === `Bearer ${authToken}`) return true;
+  return url.searchParams.get("token") === authToken;
 }
 
 function endpointFor(req, sessionId) {
@@ -66,12 +49,40 @@ async function route(req, res) {
     return;
   }
 
-  if (!authorized(req)) {
+  const url = new URL(req.url || "/", `http://${req.headers.host || `${host}:${port}`}`);
+  const protectedRoute =
+    url.pathname.startsWith("/api/") ||
+    url.pathname === "/mcp" ||
+    url.pathname === "/sse" ||
+    url.pathname === "/messages" ||
+    url.pathname === "/health";
+
+  if (protectedRoute && !authorized(req, url)) {
     sendJson(res, 401, { error: "Unauthorized" });
     return;
   }
 
-  const url = new URL(req.url || "/", `http://${req.headers.host || `${host}:${port}`}`);
+  if (url.pathname.startsWith("/api/")) {
+    return handleApi(req, res, url, { maxBodyBytes });
+  }
+
+  if (req.method === "POST" && url.pathname === "/mcp") {
+    let message;
+    try {
+      message = await readBody(req, { maxBytes: maxBodyBytes, allowEmpty: false });
+    } catch (error) {
+      sendJson(res, 400, { error: error.message || "Invalid JSON body" });
+      return;
+    }
+
+    try {
+      const response = await handle(message);
+      sendJson(res, 200, response || { accepted: true });
+    } catch (error) {
+      sendJson(res, 200, rpcError(message?.id ?? null, -32000, error.message || String(error)));
+    }
+    return;
+  }
 
   if (req.method === "GET" && url.pathname === "/sse") {
     const sessionId = crypto.randomUUID();
@@ -108,7 +119,7 @@ async function route(req, res) {
 
     let message;
     try {
-      message = await readJsonBody(req);
+      message = await readBody(req, { maxBytes: maxBodyBytes, allowEmpty: false });
     } catch (error) {
       sendJson(res, 400, { error: error.message || "Invalid JSON body" });
       return;
@@ -127,17 +138,29 @@ async function route(req, res) {
   }
 
   if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
+    if (url.pathname === "/") return serveStatic(req, res, url);
     sendJson(res, 200, {
       status: "ok",
-      transport: "sse",
+      transport: "sse+http",
       dataDir,
       sessions: sessions.size,
       auth: authToken ? "enabled" : "disabled",
+      endpoints: {
+        reader: "/",
+        api: "/api/*",
+        sse: "/sse",
+        messages: "/messages?sessionId=<id>",
+        mcp: "/mcp",
+      },
     });
     return;
   }
 
-  sendJson(res, 404, { error: "Not found" });
+  if (req.method === "GET") {
+    return serveStatic(req, res, url);
+  }
+
+  sendError(res, 404, "Not found");
 }
 
 export function startSseServer() {
@@ -149,7 +172,7 @@ export function startSseServer() {
 
   server.listen(port, host, () => {
     process.stderr.write(
-      `Co-Reading MCP SSE: http://${host}:${port}/sse\nData dir: ${dataDir}\nAuth: ${
+      `Co-Reading remote server: http://${host}:${port}\nReader: /\nREST API: /api/*\nMCP SSE: /sse\nMCP POST: /mcp\nData dir: ${dataDir}\nAuth: ${
         authToken ? "enabled" : "disabled; set MCP_AUTH_TOKEN before exposing this server"
       }\n`,
     );

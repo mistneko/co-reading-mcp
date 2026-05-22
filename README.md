@@ -79,7 +79,7 @@ READING_MCP_DATA_DIR=./data MCP_AUTH_TOKEN="change-me" npm run start:sse
 The same port serves the human reader, REST API, and remote MCP transports:
 
 - `https://your-domain.example/`: reference reader UI
-- `https://your-domain.example/?token=change-me`: reader UI with API auth saved in local storage
+- `https://your-domain.example/?token=change-me`: reader UI with auth saved in local storage and a cookie
 - `https://your-domain.example/api/*`: reader REST API
 - `https://your-domain.example/sse`: MCP SSE transport
 - `https://your-domain.example/mcp`: MCP JSON-RPC over POST
@@ -93,7 +93,7 @@ Environment variables:
 - `MCP_MAX_BODY_BYTES`: max JSON-RPC POST body size, default `25000000`
 - `READING_IMPORT_MAX_BYTES`: max EPUB/TXT upload size, default `25000000`
 
-Do not expose the remote server on the public internet without HTTPS and `MCP_AUTH_TOKEN`. Static reader files are public, but `/api/*`, `/sse`, `/messages`, `/mcp`, and `/health` require the bearer token when `MCP_AUTH_TOKEN` is set. If you use nginx, Caddy, or cloudflared, proxy `/`, `/api/*`, `/sse`, `/messages`, and `/mcp` to the same local process and make sure streaming responses are not buffered.
+Do not expose the remote server on the public internet without HTTPS and `MCP_AUTH_TOKEN`. When `MCP_AUTH_TOKEN` is set, the reader, static assets, `/api/*`, `/sse`, `/messages`, `/mcp`, and `/health` require the token. Open the reader once with `/?token=...`; the server sets a same-site cookie and the reader stores the token for API calls. If you use nginx, Caddy, or cloudflared, proxy `/`, `/api/*`, `/sse`, `/messages`, and `/mcp` to the same local process and make sure streaming responses are not buffered.
 
 ## Import Books
 

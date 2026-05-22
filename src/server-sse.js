@@ -12,6 +12,7 @@ const authToken = process.env.MCP_AUTH_TOKEN || "";
 const corsOrigin = process.env.MCP_CORS_ORIGIN || "*";
 const maxBodyBytes = Number(process.env.MCP_MAX_BODY_BYTES || process.env.READING_IMPORT_MAX_BYTES || 25_000_000);
 const sessions = new Map();
+const authCookieName = "co_reading_token";
 
 function sendSse(res, event, data) {
   res.write(`event: ${event}\n`);
@@ -24,10 +25,30 @@ function setCors(res) {
   res.setHeader("access-control-allow-headers", "content-type, authorization");
 }
 
+function cookieToken(req) {
+  const cookie = req.headers.cookie || "";
+  const prefix = `${authCookieName}=`;
+  return (
+    cookie
+      .split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(prefix))
+      ?.slice(prefix.length) || ""
+  );
+}
+
+function setAuthCookie(res, token) {
+  res.setHeader(
+    "set-cookie",
+    `${authCookieName}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`,
+  );
+}
+
 function authorized(req, url) {
   if (!authToken) return true;
   if (req.headers.authorization === `Bearer ${authToken}`) return true;
-  return url.searchParams.get("token") === authToken;
+  if (url.searchParams.get("token") === authToken) return true;
+  return decodeURIComponent(cookieToken(req)) === authToken;
 }
 
 function endpointFor(req, sessionId) {
@@ -50,7 +71,11 @@ async function route(req, res) {
   }
 
   const url = new URL(req.url || "/", `http://${req.headers.host || `${host}:${port}`}`);
+  if (authToken && url.searchParams.get("token") === authToken) {
+    setAuthCookie(res, authToken);
+  }
   const protectedRoute =
+    Boolean(authToken) ||
     url.pathname.startsWith("/api/") ||
     url.pathname === "/mcp" ||
     url.pathname === "/sse" ||

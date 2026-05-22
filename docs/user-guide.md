@@ -92,7 +92,7 @@ URLs:
 - `https://your-domain.example/sse` for MCP SSE
 - `https://your-domain.example/mcp` for JSON-RPC over POST
 
-When `MCP_AUTH_TOKEN` is set, `/api/*`, `/sse`, `/messages`, `/mcp`, and `/health` require the token. The reader stores `?token=...` in local storage and then removes it from the address bar.
+When `MCP_AUTH_TOKEN` is set, the reader, static files, `/api/*`, `/sse`, `/messages`, `/mcp`, and `/health` require the token. Open the reader once with `?token=...`; the server sets a same-site cookie, and the reader stores the token in local storage before removing it from the address bar.
 
 ## Human Notes
 

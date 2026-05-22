@@ -496,6 +496,11 @@ async function waitForSseEvent(type) {
 const endpointEvent = await waitForSseEvent("endpoint");
 const endpoint = new URL(endpointEvent.data);
 const sseReaderHtml = await fetch(`http://127.0.0.1:${ssePort}/`);
+const sseReaderAuthorized = await fetch(`http://127.0.0.1:${ssePort}/?token=smoke-token`);
+const sseCookie = sseReaderAuthorized.headers.get("set-cookie") || "";
+const sseCssWithCookie = await fetch(`http://127.0.0.1:${ssePort}/reader.css`, {
+  headers: { cookie: sseCookie },
+});
 const sseApiUnauthorized = await fetch(`http://127.0.0.1:${ssePort}/api/books`);
 const sseApiBooks = await fetchJson("/api/books", {
   baseUrl: `http://127.0.0.1:${ssePort}`,
@@ -601,8 +606,14 @@ if (httpImport.bookId !== "http-import" || httpImport.chunkCount !== 2) {
 if (!readerHtml.ok || !(await readerHtml.text()).includes("Co-Reading")) {
   throw new Error("HTTP reader did not serve the web UI");
 }
-if (!sseReaderHtml.ok || !(await sseReaderHtml.text()).includes("Co-Reading")) {
-  throw new Error("SSE process did not serve the reader UI");
+if (sseReaderHtml.status !== 401) {
+  throw new Error("SSE process did not protect reader UI with MCP_AUTH_TOKEN");
+}
+if (!sseReaderAuthorized.ok || !(await sseReaderAuthorized.text()).includes("Co-Reading")) {
+  throw new Error("SSE process did not serve authorized reader UI");
+}
+if (!sseCookie.includes("co_reading_token=") || !sseCssWithCookie.ok) {
+  throw new Error("SSE process did not set a reader auth cookie for static assets");
 }
 if (sseApiUnauthorized.status !== 401) {
   throw new Error("SSE process did not protect REST API with MCP_AUTH_TOKEN");

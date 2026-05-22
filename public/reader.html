@@ -14,7 +14,11 @@
             <p class="eyebrow">Co-Reading</p>
             <h1>Library</h1>
           </div>
-          <button id="refresh" class="icon-button" title="Refresh library">↻</button>
+          <div class="topbar-actions">
+            <button id="import-book" class="icon-button" title="Import EPUB or TXT">＋</button>
+            <button id="refresh" class="icon-button" title="Refresh library">↻</button>
+          </div>
+          <input id="import-file" type="file" accept=".epub,.txt,.text,.md,.markdown" multiple hidden />
         </header>
         <div id="books" class="books" aria-live="polite"></div>
       </section>

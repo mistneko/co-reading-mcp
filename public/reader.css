@@ -61,6 +61,11 @@ button {
   margin-bottom: 24px;
 }
 
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .eyebrow {
   margin: 0 0 6px;
   color: var(--muted);

@@ -41,6 +41,23 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error || new Error("Could not read file"));
+    reader.onload = () => {
+      const bytes = new Uint8Array(reader.result);
+      let binary = "";
+      const size = 0x8000;
+      for (let index = 0; index < bytes.length; index += size) {
+        binary += String.fromCharCode(...bytes.subarray(index, index + size));
+      }
+      resolve(btoa(binary));
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 function renderBooks() {
   $("books").innerHTML = state.books
     .map((book) => {
@@ -219,6 +236,36 @@ $("mark-read").addEventListener("click", async () => {
 });
 
 $("refresh").addEventListener("click", () => refreshCurrent().catch(showError));
+
+$("import-book").addEventListener("click", () => {
+  $("import-file").click();
+});
+
+$("import-file").addEventListener("change", async (event) => {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+  $("import-book").disabled = true;
+  try {
+    for (const file of files) {
+      $("status").textContent = `Importing ${file.name}...`;
+      await api("/api/import", {
+        method: "POST",
+        body: {
+          filename: file.name,
+          dataBase64: await fileToBase64(file),
+        },
+      });
+    }
+    $("status").textContent = files.length === 1 ? `Imported ${files[0].name}.` : `Imported ${files.length} books.`;
+    await loadBooks();
+    renderBooks();
+  } catch (error) {
+    showError(error);
+  } finally {
+    $("import-book").disabled = false;
+    event.target.value = "";
+  }
+});
 
 function showError(error) {
   $("status").textContent = error.message || String(error);

@@ -48,6 +48,8 @@ Open `http://127.0.0.1:8787`. This serves a small reference reader and local HTT
 }
 ```
 
+The reader's Library header includes an import button for EPUB, TXT, or Markdown files. Browser imports upload the file directly to the co-reading server, so they also work with remote claude.ai setups where chat attachments are isolated from the MCP server filesystem.
+
 For Claude Desktop / Claude Code, configure the MCP server as a stdio command:
 
 ```json

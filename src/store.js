@@ -1320,6 +1320,7 @@ export async function submitUserNotes({
           noteCount: context.noteCount,
         },
       };
+      const previousSubmissions = await readAllSubmissions();
       await writeJsonl(annotationsPath, updated);
       invalidateAnnotationCache();
       try {
@@ -1328,6 +1329,7 @@ export async function submitUserNotes({
         await saveSessionLedger(ledger);
       } catch (error) {
         await writeJsonl(annotationsPath, annotations);
+        await writeJsonl(submissionsPath, previousSubmissions);
         invalidateAnnotationCache();
         throw error;
       }

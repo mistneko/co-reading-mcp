@@ -672,8 +672,13 @@ async function waitForSseEvent(type) {
 const endpointEvent = await waitForSseEvent("endpoint");
 const endpoint = new URL(endpointEvent.data);
 const sseReaderHtml = await fetch(`http://127.0.0.1:${ssePort}/`);
-const sseReaderAuthorized = await fetch(`http://127.0.0.1:${ssePort}/?token=smoke-token`);
-const sseCookie = sseReaderAuthorized.headers.get("set-cookie") || "";
+const sseTokenRedirect = await fetch(`http://127.0.0.1:${ssePort}/?token=smoke-token`, {
+  redirect: "manual",
+});
+const sseCookie = sseTokenRedirect.headers.get("set-cookie") || "";
+const sseReaderAuthorized = await fetch(`http://127.0.0.1:${ssePort}/`, {
+  headers: { cookie: sseCookie },
+});
 const sseCssWithCookie = await fetch(`http://127.0.0.1:${ssePort}/reader.css`, {
   headers: { cookie: sseCookie },
 });
@@ -880,6 +885,9 @@ if (!readerHtml.ok || !(await readerHtml.text()).includes("Co-Reading")) {
 }
 if (sseReaderHtml.status !== 401) {
   throw new Error("SSE process did not protect reader UI with MCP_AUTH_TOKEN");
+}
+if (sseTokenRedirect.status !== 302) {
+  throw new Error("SSE process did not 302-redirect ?token URL to strip token from address bar");
 }
 if (!sseReaderAuthorized.ok || !(await sseReaderAuthorized.text()).includes("Co-Reading")) {
   throw new Error("SSE process did not serve authorized reader UI");

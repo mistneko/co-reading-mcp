@@ -61,6 +61,17 @@ function safeBookId(value) {
   return id;
 }
 
+const MAX_HEADING_REGEX_LENGTH = 200;
+
+function validateHeadingRegex(value) {
+  if (!value) return null;
+  const regex = String(value);
+  if (regex.length > MAX_HEADING_REGEX_LENGTH) {
+    throw new Error(`headingRegex exceeds ${MAX_HEADING_REGEX_LENGTH} characters`);
+  }
+  return regex;
+}
+
 function extensionFormat(filename, format) {
   const explicit = format ? String(format).toLowerCase().replace(/^\./, "") : "";
   if (["txt", "text", "md", "markdown"].includes(explicit)) return "txt";
@@ -123,7 +134,7 @@ function commonOptions(input = {}) {
     title: input.title ? String(input.title) : null,
     author: input.author ? String(input.author) : null,
     maxChars: positiveInteger(input.maxChars, "maxChars"),
-    headingRegex: input.headingRegex ? String(input.headingRegex) : null,
+    headingRegex: validateHeadingRegex(input.headingRegex),
     minSectionChars: positiveInteger(input.minSectionChars, "minSectionChars"),
     overwrite: input.overwrite === true,
   };

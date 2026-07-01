@@ -23,6 +23,7 @@ import {
 } from "./store.js";
 import { importBook } from "./importer.js";
 import { renderCardPng, renderCardSvg } from "./card-renderer.js";
+import { metricsSnapshot } from "./server.js";   // 本地补丁：GET /api/metrics 全家福数据源（无 import 循环，server.js 不反向依赖本文件）
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const publicDir = path.join(ROOT, "public");
@@ -227,6 +228,10 @@ export async function handleApi(req, res, url, options = {}) {
         limit: Number(url.searchParams.get("limit") || 10),
       }),
     );
+  }
+
+  if (req.method === "GET" && parts.length === 2 && parts[1] === "metrics") {
+    return sendJson(res, 200, metricsSnapshot());   // 本地补丁：全MCP调用统计汇总·各自统计侧
   }
 
   return sendError(res, 404, "Not found");

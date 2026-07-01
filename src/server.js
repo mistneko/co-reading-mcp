@@ -38,6 +38,12 @@ const protocolVersion = "2024-11-05";
 
 export const tools = [
   {
+    name: "reading_status",
+    description: "共读服务的每工具用量统计（调用次数 + MCP 响应 token 粗估，本进程累计·重启清零）。也看看同主机 Nachklang / Klanggestalt / Flânerie 的 status，对齐全局进度。",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: { title: "Status", readOnlyHint: true },
+  },
+  {
     name: "reading_list_books",
     description: "List imported books with progress and annotation counts.",
     inputSchema: {
@@ -72,17 +78,17 @@ export const tools = [
   {
     name: "reading_continue",
     description:
-      "Continue reading from the next unread chunk. If bookId is omitted, use the most recently read book.",
+      "Continue reading from the next unread chunk. If bookId is omitted, use the most recently read book. Set markRead:true to also mark this chunk read in the same call (so the next reading_continue advances) — saves a separate reading_mark_read; card notifications from marking come back under `markedRead`.",
     inputSchema: {
       type: "object",
-      properties: { bookId: { type: "string" } },
+      properties: { bookId: { type: "string" }, markRead: { type: "boolean" } },
       additionalProperties: false,
     },
     annotations: { title: "Continue Reading", readOnlyHint: true },
   },
   {
     name: "reading_search_chunks",
-    description: "Search book chunks by keyword.",
+    description: "Search book chunks by keyword. Set full:true to also inline the whole chunk text of the top hit under `topChunk` — saves a follow-up reading_read_chunk when you just want to read the best match in context.",
     inputSchema: {
       type: "object",
       required: ["query"],
@@ -90,6 +96,7 @@ export const tools = [
         bookId: { type: "string" },
         query: { type: "string" },
         limit: { type: "number" },
+        full: { type: "boolean" },
       },
       additionalProperties: false,
     },
@@ -338,10 +345,9 @@ export const tools = [
   },
   {
     name: "reading_open_card",
-    description: "Open one collected reading card and return it as an image for Claude to view.",
+    description: "Open one collected reading card and return it as an image for Claude to view. Omit cardId to open the latest unopened card (the common single-card case) — saves a reading_card_inbox lookup first.",
     inputSchema: {
       type: "object",
-      required: ["cardId"],
       properties: { cardId: { type: "string" } },
       additionalProperties: false,
     },
@@ -450,7 +456,70 @@ function imageContent({ text, image }) {
   };
 }
 
+// ── 工具用量：每工具 MCP 响应 token 粗估（本地补丁；进程内累计·重启清零；reading_status 工具浮现）──
+const _toolUsage = {};
+const _startedAt = Date.now();   // 进程启动时刻（/api/metrics 标注口径；重启清零同 _toolUsage）
+function estimateTokens(str) {
+  if (!str) return 0;
+  let cjk = 0, other = 0;
+  for (const ch of str) {
+    const c = ch.codePointAt(0);
+    if ((c >= 0x3000 && c <= 0x9fff) || (c >= 0xff00 && c <= 0xffef)) cjk++;
+    else other++;
+  }
+  return Math.ceil(cjk * 0.6 + other / 4);
+}
+function recordUsage(name, result) {
+  try {
+    const rec = _toolUsage[name] || (_toolUsage[name] = { calls: 0, respTokens: 0, respChars: 0 });
+    let text = "";
+    for (const part of (result && result.content) || []) {
+      if (part && part.type === "text") text += part.text || "";   // 图片 content block 不算回包 token
+    }
+    rec.calls += 1; rec.respChars += text.length; rec.respTokens += estimateTokens(text);
+  } catch (_) { /* 计数失败绝不影响工具本身 */ }
+}
+function usageSnapshot() {
+  const out = {};
+  for (const [k, v] of Object.entries(_toolUsage)) {
+    out[k] = { calls: v.calls, respTokens: v.respTokens, avgTokens: v.calls ? Math.round(v.respTokens / v.calls) : 0 };
+  }
+  return {
+    project: "co-reading-mcp (Mitlesen)",
+    toolUsage: out,
+    note: "每工具 MCP 响应 token 粗估，本进程累计·重启清零；只算文本回包(不含书签图片二进制)。CJK≈0.6×字 + 其余/4。也看看同主机 Nachklang/Klanggestalt/Flânerie 的 status。",
+  };
+}
+
+// 全家福汇总数据源：被 Nachklang /api/metrics/family 经 GET /api/metrics 拉取，归一成统一形状。
+// 复用同一 _toolUsage（无新计数逻辑），加进程启动戳与 total_calls 卷积。
+export function metricsSnapshot() {
+  const by_tool = {};
+  let total_calls = 0;
+  for (const [k, v] of Object.entries(_toolUsage)) {
+    by_tool[k] = { count: v.calls, tokens_out_sum: v.respTokens };
+    total_calls += v.calls;
+  }
+  return {
+    service: "co-reading-mcp",
+    started_at: new Date(_startedAt).toISOString(),
+    uptime_s: Math.round((Date.now() - _startedAt) / 1000),
+    tools: { by_tool, total_calls },
+  };
+}
+
 export async function callTool(name, args = {}) {
+  if (name === "reading_status") {
+    const r = textContent(usageSnapshot());
+    recordUsage(name, r);
+    return r;
+  }
+  const result = await dispatchTool(name, args);
+  recordUsage(name, result);
+  return result;
+}
+
+async function dispatchTool(name, args = {}) {
   switch (name) {
     case "reading_list_books":
       return textContent(await listBooks());
@@ -458,10 +527,33 @@ export async function callTool(name, args = {}) {
       return textContent(await listChunks(args.bookId));
     case "reading_read_chunk":
       return textContent(await readChunk(args.bookId, args.chunkId));
-    case "reading_continue":
-      return textContent(await continueReading(args));
-    case "reading_search_chunks":
-      return textContent(await searchChunks(args));
+    case "reading_continue": {
+      const cont = await continueReading(args);
+      // ⭐ 本地补丁 opt-in markRead：读完这块顺手标已读，下次 continue 直接进下一块（省一次 reading_mark_read）；
+      // markRead 的进度/卡片通知/合卷一并并回 cont.markedRead，不丢。
+      if (args.markRead && cont && cont.bookId && cont.chunk && cont.chunk.id) {
+        try {
+          const mr = await markRead(cont.bookId, cont.chunk.id);
+          cont.markedRead = { chunksRead: mr.chunksRead, chunkCount: mr.chunkCount, complete: mr.complete };
+          for (const k of ["collectedCard", "collectedBookCard", "finish", "cardNotification"]) {
+            if (mr[k]) cont.markedRead[k] = mr[k];
+          }
+        } catch (_) { /* 标已读失败不影响已读到的内容 */ }
+      }
+      return textContent(cont);
+    }
+    case "reading_search_chunks": {
+      const results = await searchChunks(args);
+      // ⭐ 本地补丁 opt-in full：内联首个命中的整块正文（省 search→再 reading_read_chunk 那趟）
+      if (args.full && Array.isArray(results) && results.length) {
+        const top = results[0];
+        try {
+          const chunk = await readChunk(top.bookId, top.chunkId);
+          return textContent({ results, topChunk: { bookId: top.bookId, chunkId: top.chunkId, title: chunk.chunk?.title, text: chunk.text } });
+        } catch (_) { /* 读全文失败→退回纯片段列表 */ }
+      }
+      return textContent(results);
+    }
     case "reading_import_book":
       return textContent(await importBook(args));
     case "reading_import_begin":
@@ -494,7 +586,14 @@ export async function callTool(name, args = {}) {
     case "reading_card_collection":
       return textContent(await listCardCollection(args));
     case "reading_open_card": {
-      const card = await readCard(args.cardId);
+      // ⭐ 本地补丁：不传 cardId → 默认最新一张未处理卡（listCards 按 createdAt 降序，[0]=最新）；省 inbox 一趟。
+      let cardId = args.cardId;
+      if (!cardId) {
+        const inbox = await listCardInbox({});
+        if (!inbox.length) throw new Error("没有待打开的书签卡（reading_card_inbox 看列表）。");
+        cardId = inbox[0].id;
+      }
+      const card = await readCard(cardId);
       return imageContent({
         text: `${card.kicker || "收获了一枚回声书签"}\n${card.title || card.bookTitle || "Reading card"}`,
         image: renderCardImageContent(card),

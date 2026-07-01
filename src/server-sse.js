@@ -107,7 +107,18 @@ async function route(req, res) {
   }
 
   const url = new URL(req.url || "/", `http://${req.headers.host || `${host}:${port}`}`);
-  if (authToken && url.searchParams.get("token") === authToken) {
+  // `?token=` → cookie + redirect is the BROWSER reader convenience only. Don't apply it to
+  // API/MCP endpoints: remote MCP clients (claude.ai) carry the token in the connector URL as
+  // `?token=` and need it authorized INLINE (302 would break the JSON-RPC POST). For those paths
+  // we fall through to authorized() which already accepts ?token=. (local patch — see CLAUDE.md)
+  const _readerPath = !(
+    url.pathname === "/mcp" ||
+    url.pathname === "/sse" ||
+    url.pathname === "/messages" ||
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/.well-known/")
+  );
+  if (req.method === "GET" && _readerPath && authToken && url.searchParams.get("token") === authToken) {
     setAuthCookie(res, authToken);
     url.searchParams.delete("token");
     res.writeHead(302, { location: url.pathname + url.search });

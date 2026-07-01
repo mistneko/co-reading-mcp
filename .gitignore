@@ -3,3 +3,9 @@ node_modules/
 data/
 *.log
 __pycache__/
+# 部署态密钥 —— 绝不入库
+.mcp_token
+coread.env
+*.env
+# 本地备份
+public/reader.stock.html

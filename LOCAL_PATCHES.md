@@ -1,7 +1,8 @@
 # LOCAL PATCHES (Mitlesen 部署本地补丁清单)
 
-这是 **第三方上游** `idleprocesscc/co-reading-mcp` 的本地部署。为保持对 upstream 可干净 diff，
-本地改动**不 commit 进本仓库**，而是以工作区改动存在 + 本文件记录。**re-clone / upstream 更新会抹掉以下补丁，须逐条重打。**
+这是 **第三方上游** `idleprocesscc/co-reading-mcp` 的本地部署（Mitlesen）。**2026-07-01 起已 fork 到 `mistneko/co-reading-mcp`**，
+补丁已 commit 并 push 到我们的 fork（远端 `mist`；`origin` 仍指上游供 `git fetch origin` 拉更新）。
+本文件保留为**人读补丁清单 + 重打指南**：若从纯上游 re-clone 或 rebase 上游更新导致冲突，按此逐条重打。
 
 系统服务：systemd `co-reading-mcp.service`（`node src/server-sse.js`，`127.0.0.1:3100`），改后 `systemctl restart co-reading-mcp`。
 

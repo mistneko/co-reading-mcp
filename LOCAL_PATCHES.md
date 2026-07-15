@@ -26,3 +26,9 @@
 ⚠️ `reading_continue` 仍标 `readOnlyHint:true`（默认只读；仅 `markRead:true` 时写进度，opt-in）。
 
 （另：`public/reader.html` 亦有本地改动；`.mcp_token`/`coread.env`/`public/reader.stock.html` 为未跟踪的部署态文件。）
+
+## 5. PWA 化 + 像素图标（2026-07-15，dev-task 0305a504aaeb）
+- `public/`：新增 `manifest.json` / `sw.js`（precache 仅图标；/api /sse /mcp /messages 永不拦）/ `icon-192.png` / `icon-512.png` / `apple-touch-icon.png` / `favicon.png`（像素系列第 6 枚「金毛与像素小烟并读冰蓝书」，源图 Nachklang gallery 7e079179a59d，黑角已填信纸暖白 #F5F1E8）。
+- `public/reader.html`：head 加 manifest/图标/theme-color/apple-* meta + SW 注册（`sw.js?v=mitlesen-v1`）。**改前端记得双 bump**（sw.js 的 CACHE + reader.html 的 ?v=）。
+- `src/http-routes.js`：`contentTypes` 补 `.png`。
+- `src/server-sse.js`：①公开资产免鉴权白名单（manifest.json/sw.js/icon-*/apple-touch-icon/favicon——浏览器拉 manifest、iOS 拉 touch-icon 默认不带 cookie，锁着装不上）；②未授权浏览器 GET 阅读路径改出内联「输入暗号」页（替代裸 401 JSON）——iOS 主屏 PWA cookie 容器独立，首启在页内输入 token 走 `/?token=` 302+种 cookie 流。**token 不进 manifest**（安全评估结论）。

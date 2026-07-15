@@ -35,6 +35,7 @@ const contentTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".svg": "image/svg+xml",
+  ".png": "image/png", // local patch #5: PWA 图标（manifest 校验要求正确 MIME）
 };
 
 export function sendJson(res, status, value) {

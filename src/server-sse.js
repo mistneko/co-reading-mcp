@@ -135,15 +135,53 @@ async function route(req, res) {
     return;
   }
 
+  // local patch #5 (PWA 化): 这批公开资产免鉴权——manifest/图标/SW 无敏感内容，
+  // 且浏览器拉 manifest / iOS 拉 apple-touch-icon 默认不带 cookie，锁着会装不上。
+  const _publicAsset =
+    req.method === "GET" &&
+    (url.pathname === "/manifest.json" ||
+      url.pathname === "/sw.js" ||
+      url.pathname === "/icon-192.png" ||
+      url.pathname === "/icon-512.png" ||
+      url.pathname === "/apple-touch-icon.png" ||
+      url.pathname === "/favicon.png");
+
   const protectedRoute =
-    Boolean(authToken) ||
-    url.pathname.startsWith("/api/") ||
-    url.pathname === "/mcp" ||
-    url.pathname === "/sse" ||
-    url.pathname === "/messages" ||
-    url.pathname === "/health";
+    !_publicAsset &&
+    (Boolean(authToken) ||
+      url.pathname.startsWith("/api/") ||
+      url.pathname === "/mcp" ||
+      url.pathname === "/sse" ||
+      url.pathname === "/messages" ||
+      url.pathname === "/health");
 
   if (protectedRoute && !authorized(req, url)) {
+    // local patch #5: 浏览器 GET 阅读路径给一个内联「输入暗号」页——iOS 装到主屏的 PWA
+    // 有独立 cookie 容器，首启没有 Safari 的 cookie；在这页输入 token 会在 App 容器内
+    // 走一遍 /?token= 的 302+种 cookie 流程（token 不进 manifest，钥匙不插门上）。
+    const wantsHtml = (req.headers.accept || "").includes("text/html");
+    if (req.method === "GET" && _readerPath && wantsHtml) {
+      res.writeHead(401, { "content-type": "text/html; charset=utf-8" });
+      res.end(`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>共读 · Mitlesen</title><link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F0F3FA">
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#F5F1E8;
+font-family:'DM Sans','Songti SC','Noto Serif SC',serif;color:#2D3142}
+.card{background:rgba(255,255,255,.85);border:1px solid rgba(160,170,200,.22);border-radius:16px;
+padding:34px 30px;box-shadow:0 4px 24px rgba(45,49,66,.07);text-align:center;max-width:320px}
+img{width:88px;height:88px;border-radius:22px;margin-bottom:14px}
+h1{font-size:19px;font-weight:600;margin:0 0 6px}p{font-size:13px;color:#8A90A8;margin:0 0 18px}
+input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid rgba(160,170,200,.35);
+border-radius:10px;font-size:14px;margin-bottom:12px;background:#fff}
+button{width:100%;padding:10px;border:0;border-radius:10px;background:#7B8EC6;color:#fff;
+font-size:14px;cursor:pointer}button:active{filter:brightness(.95)}</style></head>
+<body><form class="card" onsubmit="location.href='/?token='+encodeURIComponent(this.t.value.trim());return false">
+<img src="/icon-192.png" alt=""><h1>共读 · Mitlesen</h1><p>这间书房上了锁，报一下暗号。</p>
+<input name="t" type="password" placeholder="token" autocomplete="current-password" required>
+<button type="submit">进书房</button></form></body></html>`);
+      return;
+    }
     sendUnauthorized(req, res);
     return;
   }

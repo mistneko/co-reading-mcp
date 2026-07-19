@@ -47,3 +47,14 @@
 ⚠️ **对外 API 行为逐字节不变**——只有内部调用方显式传 0 才走无限量路径；`/api/cards?limit=` 的钳制（1..100）原样保留，不给外部开无限量口子。
 **实测**（120 张合成卡）：修前 `collection.total=100`、`offset=100` 返回 0 条；修后 `total=120`、`offset=100` 返回 20 条，老卡可达。
 
+## 8. `public/reader.html` — 手机批（原生重写，2026-07-19，小烟拍板「真做」+「原生重写」）
+标记块 `MOBILE-2026-07`，628 → ~900 行，仍是**零依赖单文件**（未引 React/构建链——那会破坏 upstream 属性、让日后 rebase 更疼）。
+- **④ 底 tab**：书架/在读/信箱/我。照抄本文件既有的 `hidden` 属性对切范式（`openChunk`），不引新机制；`.rail` 在手机上不再是抽屉、它**就是**书架面；`state.view` + `matchMedia change` 重算 + 开机 `renderView()`。
+- **⑤ 信箱 v1**：列表 + 火漆封缄 + 内联 `image.svg` + 收下（乐观移除/失败回滚）。数据层复用桌面既有 `fetchCardSvg`/`api`，零后端改动。「我」面 v1 = 四个数字。
+- **⑥ 长目录退化**：手机端每 `GROUP_SIZE`(10) 章手风琴，仅当前组默认展开；`.chapters` 限高 56vh 内滚。桌面不分组（逐字节旧行为）。
+- **两处必须一起改的**：`reader.html:19` 的 `?v=` 与 `sw.js:6` 的 `CACHE`（本批 → `mitlesen-v3`）。
+### 施工中踩到、re-clone 后必须留意的三个坑
+1. **`hidden` 会被作者样式的 `display` 盖过**：`.reader{display:flex}` 让它加了 `hidden` 也照样显形（`.rail` 无 `display` 规则所以藏得掉——这个不对称正是「点信箱后阅读区还杵在上面」的原因）。已显式补 `.rail[hidden],#reader[hidden]{display:none!important}`。
+2. **手机覆盖块必须排在原抽屉 `@media(max-width:880px)` 之后**（注意原块写法**无空格**）：同优先级后写的赢，放前面则 `.rail` 仍是 `position:fixed`+`translateX(-102%)` → 手机书架面**整页空白**。
+3. **分组开合态必须在 `state.tocOpen`**：`renderShelf` 是 `innerHTML=""` 全量重绘且被 5 处调用（含 `openChunk`），存局部变量则「点开一组→点进一章→组又合上」。换书 (`openBook`) 要清空。
+

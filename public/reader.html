@@ -104,33 +104,6 @@ button{font-family:inherit;cursor:pointer}
 .view-head h2{margin:0;font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text)}
 .view-sub{margin:2px 0 0;font-size:12.5px;color:var(--text-dim)}
 
-@media (max-width:880px){
-  /* 侧栏在手机上不再是抽屉，它**就是**「书架」这一面 */
-  .rail{position:static;width:auto;transform:none;box-shadow:none;z-index:auto;border-right:none}
-  .menu-btn,.scrim{display:none !important}
-  body{padding-bottom:calc(var(--nav-h) + var(--safe-b))}
-  .view[hidden]{display:none}
-  .view:not([hidden]){display:block;overflow-y:auto;height:100%;min-height:0}
-  /* ⚠️ hidden 属性只是 UA 样式的 display:none，**任何作者样式的 display 都能盖过它**。
-     .reader 有 display:flex（:199）→ 加了 hidden 也照样显形（实测：点信箱后阅读区还杵在上面）。
-     .rail 没有 display 规则所以藏得掉——这个不对称正是 bug 只出在阅读区的原因。
-     这里显式补一刀；只在手机断点内生效，桌面几何不受影响。 */
-  .rail[hidden],#reader[hidden]{display:none !important}
-  .tabbar{
-    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;
-    height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
-    background:var(--surface);backdrop-filter:blur(var(--blur-chrome));-webkit-backdrop-filter:blur(var(--blur-chrome));
-    border-top:1px solid var(--border);
-  }
-  .tabbar button{
-    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-    border:0;background:none;color:var(--text-dim);font-size:11px;letter-spacing:.5px;
-    font-family:'DM Sans',sans-serif;   /* 公理②：控件不用衬线 */
-    padding:6px 0;
-  }
-  .tabbar button .tb-i{font-size:17px;line-height:1}
-  .tabbar button[aria-selected="true"]{color:var(--accent-deep);font-weight:600}
-}
 /* ==== MOBILE-2026-07 · 手机批 ④ · end ==== */
 /* ==== MOBILE-2026-07 · 手机批 ⑤ 信封 + 我 · start ====
    公理③「蜡的物性」：情绪只收敛到蜡点一个形状——这里的 .env-seal 就是那枚火漆，
@@ -162,6 +135,27 @@ button{font-family:inherit;cursor:pointer}
 .me-num{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--accent-deep);line-height:1.1}
 .me-lab{font-size:11.5px;color:var(--text-dim);margin-top:3px;letter-spacing:.5px}
 /* ==== MOBILE-2026-07 · 手机批 ⑤ · end ==== */
+/* ==== MOBILE-2026-07 · 手机批 ⑥ 长目录分组 · start ====
+   公理④「冰的留白」：折叠条走冰蓝虚线（--vk-ice 是第二强调，用在结构分隔正合适），
+   不与藤色主强调争位。组头是控件 → 无衬线（公理②）。 */
+.chap-group{
+  display:flex;align-items:center;gap:8px;width:100%;
+  margin:8px 0 2px;padding:7px 10px;
+  background:none;border:0;border-top:1px dashed var(--vk-ice);
+  color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.4px;
+  text-align:left;
+}
+.chap-group.cur{color:var(--accent-deep)}
+.cg-range{flex:1}
+.cg-prog{font-variant-numeric:tabular-nums;color:var(--text-faint)}
+.cg-caret{width:12px;text-align:center;color:var(--text-faint)}
+@media (max-width:880px){
+  /* TOC 限高内滚：目录再长也不把书架顶出屏外，自己在框里滚 */
+  .chapters{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* ==== MOBILE-2026-07 · 手机批 ⑥ · end ==== */
+
 
 
 /* —— 主体三栏 —— */
@@ -303,6 +297,37 @@ button{font-family:inherit;cursor:pointer}
   .sheet{padding:28px 20px 24px 38px}.sheet::before{left:22px}
   .reader-head{flex-wrap:wrap}.r-actions{order:3;width:100%}.r-actions .btn{flex:1}
 }
+/* ⚠️ 下面这块必须排在上面那个 @media(max-width:880px) 抽屉块**之后**：
+   两者同优先级、都命中 .rail，后写的赢。放前面的话 .rail 仍是 position:fixed +
+   translateX(-102%) 的抽屉态 → 手机「书架」面整页空白（实测踩过）。 */
+@media (max-width:880px){
+  /* 侧栏在手机上不再是抽屉，它**就是**「书架」这一面 */
+  .rail{position:static;width:auto;transform:none;box-shadow:none;z-index:auto;border-right:none}
+  .menu-btn,.scrim{display:none !important}
+  body{padding-bottom:calc(var(--nav-h) + var(--safe-b))}
+  .view[hidden]{display:none}
+  .view:not([hidden]){display:block;overflow-y:auto;height:100%;min-height:0}
+  /* ⚠️ hidden 属性只是 UA 样式的 display:none，**任何作者样式的 display 都能盖过它**。
+     .reader 有 display:flex（:199）→ 加了 hidden 也照样显形（实测：点信箱后阅读区还杵在上面）。
+     .rail 没有 display 规则所以藏得掉——这个不对称正是 bug 只出在阅读区的原因。
+     这里显式补一刀；只在手机断点内生效，桌面几何不受影响。 */
+  .rail[hidden],#reader[hidden]{display:none !important}
+  .tabbar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;
+    height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
+    background:var(--surface);backdrop-filter:blur(var(--blur-chrome));-webkit-backdrop-filter:blur(var(--blur-chrome));
+    border-top:1px solid var(--border);
+  }
+  .tabbar button{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    border:0;background:none;color:var(--text-dim);font-size:11px;letter-spacing:.5px;
+    font-family:'DM Sans',sans-serif;   /* 公理②：控件不用衬线 */
+    padding:6px 0;
+  }
+  .tabbar button .tb-i{font-size:17px;line-height:1}
+  .tabbar button[aria-selected="true"]{color:var(--accent-deep);font-weight:600}
+}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -424,7 +449,7 @@ async function api(path,opts={}){
   return data;
 }
 
-const state={view:"shelf",books:[],bookId:null,bookTitle:"",chunks:[],chunkId:null,chunk:null,prevId:null,nextId:null,anns:[],activeId:null,sel:null};
+const state={view:"shelf",tocOpen:{},books:[],bookId:null,bookTitle:"",chunks:[],chunkId:null,chunk:null,prevId:null,nextId:null,anns:[],activeId:null,sel:null};
 const HUMAN=new Set(["user","human","koshi","you","小烟","祁烟"]);
 const isHuman=a=>HUMAN.has((a||"").toLowerCase())||HUMAN.has(a||"");
 const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -463,20 +488,55 @@ function renderShelf(){
   });
   el.scrollTop=keepScroll;   // ← 还（放在 append 之后，此时内容高度才成立）
 }
+// MOBILE-2026-07 · 手机批 ⑥ 长目录退化：48 章平铺在手机上是一根拉不到底的面条。
+// 按稿分成每组 GROUP_SIZE 章的手风琴，**仅当前章所在组默认展开**，其余折成一行组头。
+// ⚠️ 分组开合态必须提到 state：renderShelf 是 innerHTML="" 全量重绘且被 5 处调用
+// （openChunk 也在其中），存在局部变量里的话「点开一组 → 点进一章 → 组又合上了」。
+// 桌面态不分组（侧栏本来就长且有独立滚动，分组反而多一层点击）——只在 MOBILE() 下退化。
+const GROUP_SIZE=10;
 function renderChapters(){
   const wrap=document.createElement("div");wrap.className="chapters";
-  state.chunks.forEach(c=>{
+  const cs=state.chunks;
+  const mkRow=c=>{
     const row=document.createElement("div");
     row.className="chap"+(c.read?" read":"")+(c.id===state.chunkId?" current":"");
     row.innerHTML=`<span class="chap-dot"></span><span class="chap-name">${esc(c.title||c.id)}</span>${c.annotationCount?`<span class="chap-ann">${c.annotationCount}</span>`:""}`;
     row.addEventListener("click",()=>{openChunk(c.id);if(MOBILE()){state.view="read";renderView();}});
-    wrap.appendChild(row);
-  });
+    return row;
+  };
+  if(!MOBILE()||cs.length<=GROUP_SIZE){          // 桌面 / 短目录：原样平铺，逐字节旧行为
+    cs.forEach(c=>wrap.appendChild(mkRow(c)));
+    return wrap;
+  }
+  const curIdx=Math.max(0,cs.findIndex(c=>c.id===state.chunkId));
+  const curGroup=Math.floor(curIdx/GROUP_SIZE);
+  for(let g=0;g*GROUP_SIZE<cs.length;g++){
+    const part=cs.slice(g*GROUP_SIZE,(g+1)*GROUP_SIZE);
+    // 开合优先级：用户手动开合过（state.tocOpen 有记录）> 默认只开当前组
+    const manual=state.tocOpen[g];
+    const open=manual===undefined?(g===curGroup):manual;
+    const readN=part.filter(c=>c.read).length;
+    const head=document.createElement("button");
+    head.className="chap-group"+(open?" open":"")+(g===curGroup?" cur":"");
+    head.type="button";
+    head.setAttribute("aria-expanded",String(open));
+    head.innerHTML=`<span class="cg-range">第 ${g*GROUP_SIZE+1}–${g*GROUP_SIZE+part.length} 章</span>`
+      +`<span class="cg-prog">${readN}/${part.length}</span>`
+      +`<span class="cg-caret" aria-hidden="true">${open?"▾":"▸"}</span>`;
+    head.addEventListener("click",()=>{state.tocOpen[g]=!open;renderShelf();});
+    wrap.appendChild(head);
+    if(open){
+      const box=document.createElement("div");box.className="chap-group-body";
+      part.forEach(c=>box.appendChild(mkRow(c)));
+      wrap.appendChild(box);
+    }
+  }
   return wrap;
 }
 
 async function openBook(bookId){
   state.bookId=bookId;
+  state.tocOpen={};   // ⑥：换书清分组开合态，否则上一本第 3 组的开合会带到新书上
   const b=state.books.find(x=>x.bookId===bookId);state.bookTitle=b?b.title:bookId;
   $("topBook").textContent=state.bookTitle||"";
   try{

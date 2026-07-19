@@ -3,7 +3,7 @@
    否则装了的客户端一直用旧壳（CF zone 4h 缓存陷阱的防线）。
    只预缓存公开图标类资产；/api /sse /mcp /messages 一律不拦。 */
 /* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ==== */
-const CACHE = "mitlesen-v2";
+const CACHE = "mitlesen-v3";
 /* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ==== */
 const PRECACHE = ["/icon-192.png", "/icon-512.png", "/apple-touch-icon.png", "/favicon.png"];
 

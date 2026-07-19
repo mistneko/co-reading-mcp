@@ -1052,7 +1052,16 @@ function cardSummary(card) {
 }
 
 export async function listCards({ bookId, chunkId, source, scope, limit = 20, offset = 0 } = {}) {
-  const max = Math.min(Math.max(Number(limit) || 20, 1), 100);
+  // ⭐ 本地补丁（2026-07-19）：limit === 0 = 不限量的内部取全量口。
+  // 原因：listCardInbox / listCardCollection 都传 limit: 10_000 想「取全量再自己过滤分页」，
+  // 但下面这行 Math.min(…, 100) 把 10000 钳到 100 —— 全库只有最新 100 张卡进得了过滤管线。
+  // 后果：卡片攒过 100 张后，第 101 张之后的老卡在「收藏」里 total 封顶、offset>100 恒空、
+  // 永久不可达。现在线上 0 张卡看不出来，但手机批要把收藏页做成主要入口，这坑必爆。
+  // 对外 API 的钳制不变（limit 未传/传 0 以外的值时行为逐字节同旧）：只有内部调用方显式
+  // 传 0 才走无限量路径。
+  const max = Number(limit) === 0
+    ? Number.MAX_SAFE_INTEGER
+    : Math.min(Math.max(Number(limit) || 20, 1), 100);
   const start = Math.max(Number(offset) || 0, 0);
   return (await readAllCards())
     .filter((card) => !bookId || card.bookId === bookId)
@@ -1066,7 +1075,7 @@ export async function listCards({ bookId, chunkId, source, scope, limit = 20, of
 
 export async function listCardInbox({ bookId, limit = 10 } = {}) {
   const max = Math.min(Math.max(Number(limit) || 10, 1), 100);
-  return (await listCards({ bookId, limit: 10_000, offset: 0 }))
+  return (await listCards({ bookId, limit: 0, offset: 0 }))
     .filter((card) => (card.status || "new") !== "dismissed")
     .slice(0, max)
     .map((card) => ({
@@ -1082,7 +1091,7 @@ export async function listCardInbox({ bookId, limit = 10 } = {}) {
 export async function listCardCollection({ bookId, limit = 12, offset = 0 } = {}) {
   const max = Math.min(Math.max(Number(limit) || 12, 1), 50);
   const start = Math.max(Number(offset) || 0, 0);
-  const all = await listCards({ bookId, limit: 10_000, offset: 0 });
+  const all = await listCards({ bookId, limit: 0, offset: 0 });
   const toItem = (card) => ({
     id: card.id,
     title: card.title || card.bookTitle || "Reading card",

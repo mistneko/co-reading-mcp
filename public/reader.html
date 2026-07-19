@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="Mitlesen">
 <script>
 // ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ====
-if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=mitlesen-v2").catch(()=>{}));
+if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=mitlesen-v3").catch(()=>{}));
 // ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ====
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -92,6 +92,77 @@ button{font-family:inherit;cursor:pointer}
   font-size:16px;display:inline-flex;align-items:center;justify-content:center;flex:none;transition:.15s}
 .iconbtn:hover{background:var(--accent-soft);color:var(--accent-deep);border-color:var(--border-hover)}
 .menu-btn{display:none}
+
+/* ==== MOBILE-2026-07 · 手机批 ④ 底 tab + 两个新面 · start ====
+   公理①「纸与界的分层」：tab 与新面全是「界」——玻璃/Morandi 冷色，不许沾纸色（--vk-paper）。
+   公理②：tab 文字是控件，恒 DM Sans 无衬线（标题 h2 才用衬线）。
+   公理④：tab 选中态用藤色 --accent，冰蓝 --vk-ice 留给等待态，不在这抢位。
+   公理⑤「一页一仪式」：tab 切换必须是静的——无转场动画、无弹性；每个面只带自己那一个仪式。 */
+.tabbar{display:none}
+.view{display:none}
+.view-head{padding:18px 18px 10px}
+.view-head h2{margin:0;font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text)}
+.view-sub{margin:2px 0 0;font-size:12.5px;color:var(--text-dim)}
+
+@media (max-width:880px){
+  /* 侧栏在手机上不再是抽屉，它**就是**「书架」这一面 */
+  .rail{position:static;width:auto;transform:none;box-shadow:none;z-index:auto;border-right:none}
+  .menu-btn,.scrim{display:none !important}
+  body{padding-bottom:calc(var(--nav-h) + var(--safe-b))}
+  .view[hidden]{display:none}
+  .view:not([hidden]){display:block;overflow-y:auto;height:100%;min-height:0}
+  /* ⚠️ hidden 属性只是 UA 样式的 display:none，**任何作者样式的 display 都能盖过它**。
+     .reader 有 display:flex（:199）→ 加了 hidden 也照样显形（实测：点信箱后阅读区还杵在上面）。
+     .rail 没有 display 规则所以藏得掉——这个不对称正是 bug 只出在阅读区的原因。
+     这里显式补一刀；只在手机断点内生效，桌面几何不受影响。 */
+  .rail[hidden],#reader[hidden]{display:none !important}
+  .tabbar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;
+    height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
+    background:var(--surface);backdrop-filter:blur(var(--blur-chrome));-webkit-backdrop-filter:blur(var(--blur-chrome));
+    border-top:1px solid var(--border);
+  }
+  .tabbar button{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    border:0;background:none;color:var(--text-dim);font-size:11px;letter-spacing:.5px;
+    font-family:'DM Sans',sans-serif;   /* 公理②：控件不用衬线 */
+    padding:6px 0;
+  }
+  .tabbar button .tb-i{font-size:17px;line-height:1}
+  .tabbar button[aria-selected="true"]{color:var(--accent-deep);font-weight:600}
+}
+/* ==== MOBILE-2026-07 · 手机批 ④ · end ==== */
+/* ==== MOBILE-2026-07 · 手机批 ⑤ 信封 + 我 · start ====
+   公理③「蜡的物性」：情绪只收敛到蜡点一个形状——这里的 .env-seal 就是那枚火漆，
+   不做色条、不做进度渐变。公理①：信封是「界」，用玻璃卡；只有拆开后 image.svg
+   里的卡面才是「纸」。 */
+.inbox-empty{padding:22px 18px;color:var(--text-dim);font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.7}
+.inbox-empty span{color:var(--text-faint);font-size:13px}
+.envelope{
+  margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;
+}
+.env-face{position:relative;padding:16px 18px 15px 46px;cursor:pointer}
+.env-seal{
+  position:absolute;left:16px;top:18px;width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 34% 32%,color-mix(in srgb,var(--vk-gold) 88%,#fff),var(--vk-gold));
+  box-shadow:0 1px 3px rgba(45,49,66,.18);
+}
+.envelope.opened .env-seal{opacity:.32}   /* 拆过 = 蜡封黯下去，不消失（留痕） */
+.env-kicker{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--vk-gold);letter-spacing:.3px}
+.env-title{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--text);line-height:1.3;margin-top:2px}
+.env-sub{font-size:12.5px;color:var(--text-dim);margin-top:3px}
+.env-body{display:none;padding:0 12px 4px}
+.envelope.opened .env-body{display:block}
+.env-body svg{width:100%;height:auto;display:block;border-radius:var(--radius-sm)}  /* SVG 高度按字数 680/820/980 三档，必须自适应不能写死 */
+.env-actions{display:none;padding:0 16px 14px;justify-content:flex-end}
+.envelope.opened .env-actions{display:flex}
+.me-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:4px 14px 20px}
+.me-cell{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;text-align:center;box-shadow:var(--shadow-sm)}
+.me-num{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--accent-deep);line-height:1.1}
+.me-lab{font-size:11.5px;color:var(--text-dim);margin-top:3px;letter-spacing:.5px}
+/* ==== MOBILE-2026-07 · 手机批 ⑤ · end ==== */
+
 
 /* —— 主体三栏 —— */
 .app{height:calc(100% - var(--nav-h)); display:grid; grid-template-columns:312px 1fr; min-height:0}
@@ -289,6 +360,16 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </div>
   </main>
+  <!-- MOBILE-2026-07 · 手机批 ④：底 tab 的两个新面。桌面态恒 hidden（renderView 只在
+       手机断点下才可能让它们显形），故不影响桌面几何。 -->
+  <section class="view" id="viewInbox" hidden>
+    <div class="view-head"><h2>信箱</h2><p class="view-sub" id="inboxSub"></p></div>
+    <div id="inboxList"></div>
+  </section>
+  <section class="view" id="viewMe" hidden>
+    <div class="view-head"><h2>我</h2><p class="view-sub">读过的路</p></div>
+    <div id="meStats"></div>
+  </section>
 </div>
 
 <!-- 选区批注条 -->
@@ -309,6 +390,15 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </div>
 
+<!-- MOBILE-2026-07 · 手机批 ④：底 tab。公理②「衬线只在标题·日期·结语·引文」——
+     tab 文字是控件，恒 DM Sans 不加衬线。公理⑤「一页一仪式」——tab 切换本身必须是静的，
+     不加转场动画、不加弹性。 -->
+<nav class="tabbar" id="tabbar" role="tablist" aria-label="主导航">
+  <button data-view="shelf" role="tab" aria-selected="true"><span class="tb-i">▤</span>书架</button>
+  <button data-view="read"  role="tab" aria-selected="false"><span class="tb-i">▦</span>在读</button>
+  <button data-view="inbox" role="tab" aria-selected="false"><span class="tb-i">✉</span>信箱</button>
+  <button data-view="me"    role="tab" aria-selected="false"><span class="tb-i">✦</span>我</button>
+</nav>
 <div class="toast" id="toast"></div>
 
 <!-- ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ==== -->
@@ -334,7 +424,7 @@ async function api(path,opts={}){
   return data;
 }
 
-const state={books:[],bookId:null,bookTitle:"",chunks:[],chunkId:null,chunk:null,prevId:null,nextId:null,anns:[],activeId:null,sel:null};
+const state={view:"shelf",books:[],bookId:null,bookTitle:"",chunks:[],chunkId:null,chunk:null,prevId:null,nextId:null,anns:[],activeId:null,sel:null};
 const HUMAN=new Set(["user","human","koshi","you","小烟","祁烟"]);
 const isHuman=a=>HUMAN.has((a||"").toLowerCase())||HUMAN.has(a||"");
 const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -349,8 +439,12 @@ async function loadBooks(keep){
   renderShelf();
   if(!keep && !state.bookId && state.books.length) openBook(state.books[0].bookId);
 }
+// MOBILE-2026-07 · 手机批 ①：renderShelf 是 innerHTML="" 全量重绘，且被 5 处调用
+// （loadBooks/openBook/openChunk/reload/markRead）。桌面侧栏短看不出，**手机上目录很长，
+// 每点一次章节就滚回顶部**。重绘前后存还 scrollTop —— 这是手机批的第一个必修项。
 function renderShelf(){
   const el=$("shelf");
+  const keepScroll=el.scrollTop;   // ← 存
   if(!state.books.length){el.innerHTML='<div style="color:var(--text-dim);font-style:italic;font-family:var(--serif);padding:18px 6px">书架还空着。<br>点右上角 ＋ 导入一本 EPUB / TXT。</div>';return;}
   el.innerHTML="";
   state.books.forEach(b=>{
@@ -367,6 +461,7 @@ function renderShelf(){
     el.appendChild(card);
     if(b.bookId===state.bookId){el.appendChild(renderChapters());}
   });
+  el.scrollTop=keepScroll;   // ← 还（放在 append 之后，此时内容高度才成立）
 }
 function renderChapters(){
   const wrap=document.createElement("div");wrap.className="chapters";
@@ -374,7 +469,7 @@ function renderChapters(){
     const row=document.createElement("div");
     row.className="chap"+(c.read?" read":"")+(c.id===state.chunkId?" current":"");
     row.innerHTML=`<span class="chap-dot"></span><span class="chap-name">${esc(c.title||c.id)}</span>${c.annotationCount?`<span class="chap-ann">${c.annotationCount}</span>`:""}`;
-    row.addEventListener("click",()=>{openChunk(c.id);if(window.matchMedia("(max-width:880px)").matches)closeDrawer();});
+    row.addEventListener("click",()=>{openChunk(c.id);if(MOBILE()){state.view="read";renderView();}});
     wrap.appendChild(row);
   });
   return wrap;
@@ -605,6 +700,114 @@ function closeDrawer(){document.body.classList.remove("drawer");}
 
 /* —— 事件绑定 —— */
 $("menu").onclick=()=>document.body.classList.toggle("drawer");
+// ==== MOBILE-2026-07 · 手机批 ⑤ 信箱 v1 · start ====
+// 数据层完全复用桌面既有链路（fetchCardSvg / api），只换排版：桌面是单张模态队列，
+// 手机是列表 + 火漆封缄。零后端改动。
+//
+// ⚠️ 真实字段（实测，与设计稿 SPEC §5 的假设不同——照稿写会渲染出一堆 undefined）：
+//   /api/card-inbox 返回**裸数组**，每项只有 {id, message, title, subtitle, createdAt, hint}
+//   稿里的 kicker 在这个端点叫 **message**（在 /api/card-collection 里才叫 kicker）
+//   稿里的 quote / note / footer / art —— inbox 端点**都不存在**，卡面内容全在 image.svg 里
+// 三态：sealed(未拆) → opened(已拆) 是**前端本地态**（后端只有 new/dismissed 两态，无 opened）；
+//   dismissed 是服务端真相，dismiss 后该卡从 inbox 消失、在 collection 里留痕。
+const openedCards=new Set();   // 本地「已拆封」态，刷新即忘（拆信这个动作本身不上报服务端）
+async function loadInbox(){
+  const list=$("inboxList"), sub=$("inboxSub");
+  list.innerHTML='<div class="inbox-empty">正在取信…</div>';
+  let cards;
+  try{
+    cards=await api("/api/card-inbox?limit=100");   // 不带 bookId = 跨书（后端该参数可选）
+  }catch(e){
+    list.innerHTML='<div class="inbox-empty">信箱打不开：'+esc(e.message)+'</div>';
+    sub.textContent=""; return;
+  }
+  if(!Array.isArray(cards)||!cards.length){
+    list.innerHTML='<div class="inbox-empty">还没有新的书签。<br><span>读完一节，这里会多一枚。</span></div>';
+    sub.textContent=""; return;
+  }
+  sub.textContent=cards.length+" 枚待拆";
+  list.innerHTML="";
+  cards.forEach(c=>list.appendChild(inboxItem(c)));
+}
+function inboxItem(c){
+  const el=document.createElement("article");
+  el.className="envelope"+(openedCards.has(c.id)?" opened":"");
+  el.innerHTML=
+    '<div class="env-face">'
+    +'<div class="env-seal" aria-hidden="true"></div>'
+    +'<div class="env-kicker">'+esc(c.message||"收获了一枚回声书签")+'</div>'
+    +'<div class="env-title">'+esc(c.title||"Reading card")+'</div>'
+    +(c.subtitle?'<div class="env-sub">'+esc(c.subtitle)+'</div>':'')
+    +'</div>'
+    +'<div class="env-body"></div>'
+    +'<div class="env-actions"><button class="btn primary" type="button">收下</button></div>';
+  const face=el.querySelector(".env-face"), body=el.querySelector(".env-body");
+  face.addEventListener("click",async()=>{
+    if(openedCards.has(c.id))return;                  // 已拆就别重复拉
+    openedCards.add(c.id); el.classList.add("opened");
+    body.innerHTML='<div class="inbox-empty">展开中…</div>';
+    try{ body.innerHTML=await fetchCardSvg(c.id); }
+    catch(e){ body.innerHTML='<div class="inbox-empty">卡面取不到（'+esc(e.message)+'）</div>'; }
+  });
+  el.querySelector("button").addEventListener("click",async()=>{
+    const btn=el.querySelector("button"); btn.disabled=true;
+    const prev=el.style.display; el.style.display="none";   // 乐观移除
+    try{
+      await api("/api/cards/"+encodeURIComponent(c.id)+"/dismiss",{method:"POST"});
+      el.remove();
+      const left=$("inboxList").querySelectorAll(".envelope").length;
+      $("inboxSub").textContent=left?left+" 枚待拆":"";
+      if(!left)$("inboxList").innerHTML='<div class="inbox-empty">都收下了。</div>';
+    }catch(e){
+      el.style.display=prev; btn.disabled=false;            // 失败回滚（SPEC §3 第 7-9 步）
+      toast("收下失败："+e.message,3500);
+    }
+  });
+  return el;
+}
+// 「我」面 v1：先上四个数字 + 卡片墙入口。⚠️ 生产端原本没有任何统计视图，这是净新；
+// 公理⑤规定统计面的签名仪式是「山峦」，那张图另立单，先不画（宁可空着也不摆半成品）。
+async function loadMe(){
+  const el=$("meStats");
+  el.innerHTML='<div class="inbox-empty">正在数…</div>';
+  try{
+    const books=state.books.length?state.books:await api("/api/books");
+    const col=await api("/api/card-collection?limit=1&offset=0");
+    const nBooks=books.length;
+    const nRead=books.reduce((a,b)=>a+(b.chunksRead||0),0);
+    const nAnn=books.reduce((a,b)=>a+(b.annotationCount||0),0);
+    // ⚠️ total 只统计 items(section 卡)，不含 bookCards —— 算「共 N 张」要两者相加
+    const nCards=(col.total||0)+((col.bookCards||[]).length);
+    const cell=(n,label)=>'<div class="me-cell"><div class="me-num">'+n+'</div><div class="me-lab">'+label+'</div></div>';
+    el.innerHTML='<div class="me-grid">'+cell(nBooks,"本书")+cell(nRead,"节读过")+cell(nAnn,"条批注")+cell(nCards,"枚书签")+'</div>';
+  }catch(e){
+    el.innerHTML='<div class="inbox-empty">数不出来：'+esc(e.message)+'</div>';
+  }
+}
+// ==== MOBILE-2026-07 · 手机批 ⑤ · end ====
+// ==== MOBILE-2026-07 · 手机批 ④ renderView · start ====
+// 照抄 openChunk 既有的 hidden 属性对切范式（本文件唯一的视图切换机制），不引入新东西。
+// 桌面态 (>880px) 一律把两个新面藏起、rail/reader 都显形 —— 桌面几何逐字节不变。
+const MOBILE=()=>window.matchMedia("(max-width:880px)").matches;
+function renderView(){
+  const m=MOBILE();
+  document.body.dataset.view=m?state.view:"desktop";
+  $("rail").hidden      = m && state.view!=="shelf";
+  $("reader").hidden    = m && state.view!=="read";
+  $("viewInbox").hidden = !(m && state.view==="inbox");
+  $("viewMe").hidden    = !(m && state.view==="me");
+  $("tabbar").querySelectorAll("button").forEach(b=>
+    b.setAttribute("aria-selected",String(b.dataset.view===state.view)));
+}
+$("tabbar").onclick=e=>{
+  const b=e.target.closest("[data-view]"); if(!b) return;
+  state.view=b.dataset.view; renderView();
+  if(state.view==="inbox") loadInbox();
+  if(state.view==="me") loadMe();
+};
+// 断点变化要重算（转屏 / 桌面缩窗）；matchMedia 比 resize 省，且只在真的跨断点时触发
+window.matchMedia("(max-width:880px)").addEventListener("change",renderView);
+// ==== MOBILE-2026-07 · 手机批 ④ renderView · end ====
 $("scrim").onclick=closeDrawer;
 $("theme").onclick=()=>{const d=document.documentElement;d.dataset.theme=d.dataset.theme==="dark"?"light":"dark";localStorage.setItem("mitlesen-theme",d.dataset.theme);};
 $("import").onclick=()=>$("file").click();
@@ -622,6 +825,7 @@ $("nfSave").onclick=saveNote;
 document.addEventListener("selectionchange",()=>{clearTimeout(window._st);window._st=setTimeout(onSelect,120);});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeNoteForm();$("selbar").classList.remove("show");}});
 
+renderView();   // MOBILE-2026-07 ④：开机先定一次视图（桌面态=两栏原样，手机态=书架面）
 loadBooks();
 </script>
 </body>

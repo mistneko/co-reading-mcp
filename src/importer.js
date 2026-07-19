@@ -58,6 +58,12 @@ function safeBookId(value) {
   if (!/^[A-Za-z0-9._\-\u4e00-\u9fff]+$/u.test(id) || id.includes("..")) {
     throw new Error("bookId may only contain letters, numbers, CJK characters, dot, dash, or underscore");
   }
+  // \u5ba1\u8ba1 0719 \ud83d\udfe0\uff1a\u5355\u4e2a "." \u80fd\u8fc7\u4e0a\u9762\u4e24\u9053\uff08\u5728\u5b57\u7b26\u96c6\u5185\u3001\u4e0d\u542b ".."\uff09\uff0c\u800c resolveInside \u53c8\u523b\u610f\u653e\u884c
+  // relative==="" \u2192 prepareTarget \u89e3\u6790\u51fa booksDir \u672c\u8eab \u2192 overwrite \u65f6 rm \u6389\u6574\u4e2a\u4e66\u5e93\uff08\u4e14\u4e0d\u8d70
+  // trash \u5f52\u6863\uff0c\u65e0\u6cd5\u6062\u590d\uff09\u3002\u4efb\u4f55\u4ee5 "." \u5f00\u5934\u7684 id \u90fd\u4e0d\u8be5\u662f\u5408\u6cd5\u4e66 id\u3002
+  if (id === "." || id.startsWith(".")) {
+    throw new Error("bookId may not be \".\" or start with a dot");
+  }
   return id;
 }
 
@@ -145,6 +151,10 @@ async function prepareTarget(options) {
   if (!options.bookId) return;
 
   const target = resolveInside(booksDir, options.bookId);
+  // 纵深防御（审计 0719 🟠）：即使 safeBookId 将来被放宽，也绝不允许 rm 到书库根本身。
+  if (path.resolve(target) === path.resolve(booksDir)) {
+    throw new Error(`Refusing to overwrite the entire books directory (bookId=${options.bookId})`);
+  }
   if (!(await exists(target))) return;
   if (!options.overwrite) {
     throw new Error(`Book already exists: ${options.bookId}. Pass overwrite: true to replace it.`);

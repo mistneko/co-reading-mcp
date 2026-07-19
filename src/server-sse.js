@@ -51,7 +51,16 @@ function authorized(req, url) {
   if (!authToken) return true;
   if (req.headers.authorization === `Bearer ${authToken}`) return true;
   if (url.searchParams.get("token") === authToken) return true;
-  return decodeURIComponent(cookieToken(req)) === authToken;
+  // 审计 0719 🟡：畸形 cookie（如 co_reading_token=%）会让 decodeURIComponent 抛 URIError，
+  // 而它抛在鉴权判断之前 → 冒泡到顶层 catch → 全站 500，连「报暗号」页都渲染不出来；
+  // cookie 是 HttpOnly，用户在页内没有任何自救手段。解不开就当没带 cookie，自然掉进 401 暗号页。
+  let cookieValue = "";
+  try {
+    cookieValue = decodeURIComponent(cookieToken(req));
+  } catch {
+    return false;
+  }
+  return cookieValue === authToken;
 }
 
 function externalBaseUrl(req) {

@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" viewport="700x160" name="Corner radii" subtitle="Soft everywhere; paper the sole exception" -->
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg);background-image:var(--texture-dots);font-family:var(--font-sans);color:var(--text)}
+  .row{display:flex;gap:14px;padding:20px;flex-wrap:wrap}
+  .chip{display:flex;flex-direction:column;gap:6px;align-items:center}
+  .box{width:74px;height:54px;background:var(--surface-solid);border:1px solid var(--border-hover);box-shadow:var(--shadow-sm)}
+  .n{font-size:11px;font-weight:600}
+  .tok{font-size:10px;color:var(--text-faint)}
+</style>
+<div class="row">
+  <div class="chip"><div class="box" style="border-radius:var(--radius-sheet)"></div><div class="n">3 · sheet</div><div class="tok">--radius-sheet</div></div>
+  <div class="chip"><div class="box" style="border-radius:var(--radius-xs)"></div><div class="n">6 · dot/chip</div><div class="tok">--radius-xs</div></div>
+  <div class="chip"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="n">10 · card</div><div class="tok">--radius-sm</div></div>
+  <div class="chip"><div class="box" style="border-radius:var(--radius)"></div><div class="n">16 · panel</div><div class="tok">--radius</div></div>
+  <div class="chip"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="n">20 · sheet-modal</div><div class="tok">--radius-lg</div></div>
+  <div class="chip"><div class="box" style="border-radius:var(--radius-card)"></div><div class="n">34 · keepsake</div><div class="tok">--radius-card</div></div>
+  <div class="chip"><div class="box" style="border-radius:var(--radius-pill);width:54px"></div><div class="n">999 · pill</div><div class="tok">--radius-pill</div></div>
+</div>

@@ -1,0 +1,18 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Shadows & elevation" subtitle="Cool, low-opacity; keepsake is the only deep one" -->
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg);font-family:var(--font-sans);color:var(--text)}
+  .row{display:flex;gap:22px;padding:26px 24px;flex-wrap:wrap}
+  .chip{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .box{width:96px;height:56px;background:var(--surface-solid);border:1px solid var(--border);border-radius:12px}
+  .n{font-size:11px;font-weight:600}
+  .tok{font-size:10px;color:var(--text-faint)}
+</style>
+<div class="row">
+  <div class="chip"><div class="box" style="box-shadow:var(--shadow-sm)"></div><div class="n">sm</div><div class="tok">--shadow-sm</div></div>
+  <div class="chip"><div class="box" style="box-shadow:var(--shadow)"></div><div class="n">base</div><div class="tok">--shadow</div></div>
+  <div class="chip"><div class="box" style="box-shadow:var(--shadow-lg)"></div><div class="n">lg · floating</div><div class="tok">--shadow-lg</div></div>
+  <div class="chip"><div class="box" style="box-shadow:var(--shadow-book-active);border-color:var(--accent-med)"></div><div class="n">book active</div><div class="tok">--shadow-book-active</div></div>
+  <div class="chip"><div class="box" style="box-shadow:0 18px 54px rgba(70,54,42,.13)"></div><div class="n">keepsake</div><div class="tok">--shadow-card</div></div>
+</div>

@@ -1,0 +1,19 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Screen surfaces" subtitle="Cool blue-white chrome the app is built on" -->
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg);background-image:var(--texture-dots);font-family:var(--font-sans);color:var(--text)}
+  .row{display:flex;gap:12px;padding:20px}
+  .chip{flex:1;display:flex;flex-direction:column;gap:7px}
+  .sw{height:60px;border-radius:12px;border:1px solid var(--border)}
+  .n{font-size:12px;font-weight:600}
+  .h{font-size:11px;color:var(--text-dim);font-variant-numeric:tabular-nums}
+  .tok{font-size:10px;color:var(--text-faint)}
+</style>
+<div class="row">
+  <div class="chip"><div class="sw" style="background:var(--bg)"></div><div class="n">Background</div><div class="h">#F0F3FA</div><div class="tok">--bg</div></div>
+  <div class="chip"><div class="sw" style="background:var(--bg2)"></div><div class="n">Recessed</div><div class="h">#E8ECF6</div><div class="tok">--bg2</div></div>
+  <div class="chip"><div class="sw" style="background:var(--surface-solid)"></div><div class="n">Surface</div><div class="h">#FFFFFF</div><div class="tok">--surface-solid</div></div>
+  <div class="chip"><div class="sw" style="background:var(--surface);backdrop-filter:blur(12px)"></div><div class="n">Glass panel</div><div class="h">white · 82%</div><div class="tok">--surface</div></div>
+  <div class="chip"><div class="sw" style="background:var(--surface-solid);border-color:var(--border-hover)"></div><div class="n">Hairline</div><div class="h">cool grey</div><div class="tok">--border / --border-hover</div></div>
+</div>

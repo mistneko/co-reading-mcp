@@ -1,0 +1,25 @@
+<!-- @dsCard group="Colors" viewport="700x170" name="Highlight inks & snow-blue" subtitle="Gold = yours, ice = 小奏; snow = 小奏's notes" -->
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--grad-paper);font-family:var(--font-serif);color:var(--vk-ink)}
+  .wrap{padding:20px;display:flex;flex-direction:column;gap:16px}
+  .demo{font-size:19px;line-height:1.9}
+  mark{color:inherit;border-radius:1px;padding:0 1px}
+  .mh{background:var(--mark-human)}
+  .ma{background:var(--mark-ai)}
+  .row{display:flex;gap:12px}
+  .chip{flex:1;display:flex;flex-direction:column;gap:6px}
+  .sw{height:40px;border-radius:10px;border:1px solid rgba(176,110,90,.28)}
+  .n{font-size:12px;font-weight:600;font-family:var(--font-sans)}
+  .tok{font-size:10px;color:var(--vk-ink-dim);font-family:var(--font-sans)}
+</style>
+<div class="wrap">
+  <div class="demo">一句被 <mark class="mh">你划下的话</mark>，也可能是 <mark class="ma">小奏停在的同一句</mark>。</div>
+  <div class="row">
+    <div class="chip"><div class="sw" style="background:var(--vk-gold)"></div><div class="n">Gold · human</div><div class="tok">--highlight-human · #C9A86A</div></div>
+    <div class="chip"><div class="sw" style="background:var(--vk-ice)"></div><div class="n">Ice · 小奏</div><div class="tok">--highlight-ai · #9CC8DC</div></div>
+    <div class="chip"><div class="sw" style="background:var(--snow)"></div><div class="n">Snow surface</div><div class="tok">--snow · #F7F9FC</div></div>
+    <div class="chip"><div class="sw" style="background:var(--snow-ink)"></div><div class="n">Snow ink</div><div class="tok">--snow-ink · #3A4453</div></div>
+  </div>
+</div>

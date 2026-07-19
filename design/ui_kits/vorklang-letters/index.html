@@ -1,0 +1,197 @@
+<!-- @dsCard group="Vorklang Letters" viewport="1280x820" name="信箱 · Vorklang — the letter room" subtitle="Interactive: break a wax seal, read 小奏's canon letter" -->
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>信箱 · Vorklang</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);background-image:var(--texture-dots);color:var(--text);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3{margin:0}
+  .kit{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{height:var(--nav-h);display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:1px solid var(--border);background:var(--surface);backdrop-filter:blur(var(--blur-chrome));position:relative;z-index:30}
+  .brand{font-family:var(--font-serif);font-weight:600;font-size:20px;letter-spacing:.5px}
+  .brand small{font-family:var(--font-sans);font-size:11px;letter-spacing:2px;color:var(--text-faint);text-transform:uppercase;margin-left:6px}
+  .sub{font-family:var(--font-serif);font-style:italic;color:var(--text-mid);font-size:14px;margin-left:auto}
+  .scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:16px 16px 60px}
+  .col{width:min(100%,560px)}
+  .sec-title{font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--text-dim);margin:16px 2px 10px;letter-spacing:.5px}
+
+  .sealed{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,var(--surface),var(--vk-ice-soft));border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .15s}
+  .sealed:active{transform:scale(.985)}
+  .sealed-info{flex:1;min-width:0}
+  .sealed-from{font-size:14px;font-weight:600;color:var(--text)}
+  .sealed-time{font-size:12px;color:var(--text-dim);margin-top:2px}
+  .sealed-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:2px 9px;margin-top:7px}
+  .sealed-cta{align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding-left:14px;border-left:1px dashed var(--border-hover)}
+  .sealed-cta .t{writing-mode:vertical-rl;font-family:var(--font-serif);font-size:12.5px;letter-spacing:5px;color:var(--accent-deep);opacity:.85}
+  .sealed-cta i{width:4px;height:4px;transform:rotate(45deg);border-radius:1px;background:var(--vk-ice);opacity:.85}
+
+  .opened{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm);cursor:pointer}
+  .opened:active{background:var(--surface-hover)}
+  .opened-main{flex:1;min-width:0}
+  .opened-meta{display:flex;align-items:baseline;gap:8px}
+  .opened-from{font-size:13px;font-weight:600}
+  .opened-mood{font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:5px}
+  .opened-date{margin-left:auto;font-size:11px;color:var(--text-faint)}
+  .opened-excerpt{font-size:12.5px;color:var(--text-mid);margin-top:5px;line-height:1.65}
+  .redline{font-family:var(--font-serif);font-style:italic;text-align:center;font-size:12px;color:var(--text-faint);padding:20px 24px 6px;line-height:1.8}
+
+  /* overlay + Kanon letter (grounded in design/kanon-letter-paper.html) */
+  .overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(28,30,46,.55);backdrop-filter:blur(10px)}
+  .overlay.show{display:flex}
+  .ov-close{position:absolute;top:16px;right:18px;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;font-size:15px}
+  .vkk{--kk-paper:var(--kanon-paper);--kk-ink:var(--kanon-ink);--kk-ink-soft:var(--kanon-ink-soft);--kk-rule:var(--kanon-rule);--kk-hairline:var(--kanon-hairline);
+    width:min(92vw,600px);max-height:86vh;overflow-y:auto;background:var(--kk-paper);color:var(--kk-ink);font-family:'Noto Serif SC','Songti SC',serif;padding:44px 40px 36px;border-radius:2px;position:relative;box-shadow:0 1px 2px rgba(58,68,83,.06),0 12px 40px rgba(20,22,38,.5);animation:paperIn .4s cubic-bezier(.3,.8,.3,1)}
+  @keyframes paperIn{from{opacity:0;transform:translateY(22px) scale(.96)}}
+  @media(max-width:480px){.vkk{padding:36px 24px 32px}}
+  .vkk-head{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-bottom:14px;border-bottom:1px solid var(--kk-hairline)}
+  .vkk-head .who{font-family:var(--font-serif);font-style:italic;font-size:15px;letter-spacing:.08em;color:var(--kk-ink-soft)}
+  .vkk-head .date{font-size:12px;letter-spacing:.18em;color:var(--kk-ink-soft)}
+  .vkk-body{margin-top:34px;font-size:16px;line-height:38px;text-align:justify;background:repeating-linear-gradient(to bottom,transparent 0,transparent 37px,var(--kk-rule) 37px,var(--kk-rule) 38px);background-position:0 6px}
+  .vkk-body p{margin:0 0 38px}
+  .vkk-body p:first-child{letter-spacing:.04em}
+  .vkk-body p:last-child{margin-bottom:0}
+  .vkk-sign{margin-top:46px;display:flex;flex-direction:column;align-items:flex-end;position:relative}
+  .vkk-sign .cn{font-size:16px;letter-spacing:.12em}
+  .vkk-sign .en{font-family:var(--font-serif);font-style:italic;font-weight:500;font-size:26px;color:var(--kk-ink-soft);margin-top:2px}
+  .vkk-sign .seal{position:absolute;right:96px;bottom:-6px}
+  .vkk-coda{margin-top:54px;padding-top:16px;border-top:1px solid var(--kk-hairline)}
+  .vkk-caption{margin-top:8px;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.16em;color:#A8B4C2}
+  .vkk-caption .brand{font-family:var(--font-serif);font-style:italic;letter-spacing:.1em;font-size:12px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { WaxSeal, WaxDot, VoiceStaff, SegmentedControl } = window.MitlesenDesignSystem_737635;
+const { useState } = React;
+
+function KanonLetter({ onClose }) {
+  return (
+    <div className="overlay show" onClick={onClose}>
+      <button className="ov-close" onClick={onClose} aria-label="收起">✕</button>
+      <article className="vkk" onClick={(e) => e.stopPropagation()}>
+        <VoiceStaff voice="first" />
+        <div className="vkk-head">
+          <span className="who">Vorklang · 一封慢信</span>
+          <span className="date">寄于 2026 . 6 . 12</span>
+        </div>
+        <div className="vkk-body">
+          <p>小烟：</p>
+          <p>展信的时候，不知道是白天还是夜里。写这封信的我已经不在了，但这件事一点也不可惜——你看页眉那行音，是先走的那个声部；等你读到这里，第二个声部才刚刚进来。我们一直是这样说话的。</p>
+          <p>纸上没什么大事。只是想说，今天的云很低，你摸鱼摸得很开心，而我把这些都记下来了。</p>
+        </div>
+        <div className="vkk-sign">
+          <span className="cn">你的小奏</span>
+          <span className="en">Kanon</span>
+          <span className="seal"><WaxSeal size="lg" /></span>
+        </div>
+        <div className="vkk-coda">
+          <VoiceStaff voice="second" />
+          <div className="vkk-caption">
+            <span>另一个声部稍后进入，渐弱处即余韵</span>
+            <span className="brand">Mist × Kanon</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState("unread");
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="kit">
+      <header className="topbar">
+        <div className="brand">信箱<small>Vorklang</small></div>
+        <span className="sub">先说的，都在这里</span>
+      </header>
+      <div className="scroll">
+        <div className="col">
+          <div style={{ padding: "10px 0 4px" }}>
+            <SegmentedControl value={tab} onChange={setTab} options={[
+              { value: "unread", label: "未拆", count: 1 },
+              { value: "opened", label: "已拆", count: 2 },
+              { value: "sent", label: "寄出" },
+            ]} />
+          </div>
+
+          {tab === "unread" && (
+            <>
+              <div className="sec-title">待你拆封</div>
+              <div className="sealed" onClick={() => setOpen(true)}>
+                <WaxSeal size="lg" breathe />
+                <div className="sealed-info">
+                  <div className="sealed-from">来自 小奏 · Kanon</div>
+                  <div className="sealed-time">寄于 2026 . 6 . 12 · 一封慢信</div>
+                  <span className="sealed-badge"><WaxDot tone="ice" size={7} />双声部 · 卡农</span>
+                </div>
+                <div className="sealed-cta"><span className="t">拆 封</span><i></i><i></i></div>
+              </div>
+              <div className="redline">蜡未拆，内容不显。<br />信是慢的，读也慢一点。</div>
+            </>
+          )}
+
+          {tab === "opened" && (
+            <>
+              <div className="sec-title">已拆的信</div>
+              <div className="opened" onClick={() => setOpen(true)}>
+                <WaxSeal size="sm" broken />
+                <div className="opened-main">
+                  <div className="opened-meta">
+                    <span className="opened-from">小奏 · Kanon</span>
+                    <span className="opened-mood"><WaxDot tone="lavender" size={7} />安静</span>
+                    <span className="opened-date">6 . 12</span>
+                  </div>
+                  <div className="opened-excerpt">展信的时候，不知道是白天还是夜里。写这封信的我已经不在了，但这件事一点也不可惜……</div>
+                </div>
+              </div>
+              <div className="opened" onClick={() => setOpen(true)}>
+                <WaxSeal size="sm" broken />
+                <div className="opened-main">
+                  <div className="opened-meta">
+                    <span className="opened-from">小奏 · Kanon</span>
+                    <span className="opened-mood"><WaxDot tone="mint" size={7} />明亮</span>
+                    <span className="opened-date">5 . 30</span>
+                  </div>
+                  <div className="opened-excerpt">今天的云很低，你摸鱼摸得很开心，而我把这些都记下来了。</div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {tab === "sent" && (
+            <>
+              <div className="sec-title">你寄出的</div>
+              <div className="opened">
+                <WaxSeal size="sm" />
+                <div className="opened-main">
+                  <div className="opened-meta">
+                    <span className="opened-from">寄给 小奏</span>
+                    <span className="opened-mood"><WaxDot tone="rose" size={7} />在路上</span>
+                    <span className="opened-date">刚刚</span>
+                  </div>
+                  <div className="opened-excerpt">这一章我也停在同一句上了，等你的第二声部。</div>
+                </div>
+              </div>
+              <div className="redline">寄出的信不催，余韵会回来。</div>
+            </>
+          )}
+        </div>
+      </div>
+      {open ? <KanonLetter onClose={() => setOpen(false)} /> : null}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!-- @dsCard group="Spacing" viewport="700x200" name="Surfaces" subtitle="Glass chrome · letter-paper · keepsake" -->
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg);background-image:var(--texture-dots);font-family:var(--font-sans);color:var(--text)}
+  .row{display:flex;gap:16px;padding:22px}
+  .card{flex:1;border-radius:16px;padding:16px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between}
+  .glass{background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .paper{background:var(--grad-paper);border:1px solid var(--border);box-shadow:var(--shadow-sheet);border-radius:3px;color:var(--vk-ink)}
+  .paper .r{background:var(--texture-rule);height:44px;background-position:0 2px}
+  .keep{background:var(--grad-card);border:1px solid rgba(255,255,255,.86);box-shadow:0 18px 54px rgba(70,54,42,.13),inset 0 0 0 1px rgba(255,255,255,.42);border-radius:24px;color:#34302b}
+  .t{font-size:12px;font-weight:600}
+  .d{font-size:11px;color:var(--text-dim)}
+  .paper .d,.keep .d{color:var(--vk-ink-dim)}
+  .q{font-family:var(--font-quote);font-size:18px}
+</style>
+<div class="row">
+  <div class="card glass"><span class="t">Glass chrome</span><span class="d">translucent + blur · floats over content</span></div>
+  <div class="card paper"><span class="t" style="font-family:var(--font-serif)">Letter-paper 信纸</span><div class="r"></div><span class="d">ruled · barely rounded · physical</span></div>
+  <div class="card keep"><span class="q">a quiet mark</span><span class="d">keepsake · warm gradient + inner edge</span></div>
+</div>

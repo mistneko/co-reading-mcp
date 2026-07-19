@@ -1,0 +1,54 @@
+/* ============================================================
+   Mitlesen · Typography
+   Three type voices:
+   - SERIF DISPLAY  Cormorant Garamond — brand, titles, book names
+   - SANS UI        DM Sans — chrome, labels, controls
+   - READING SERIF  Georgia/Songti — keepsake-card quotes, body reading
+   All three webfonts are on Google Fonts (see fonts.css).
+   ============================================================ */
+
+:root {
+  /* —— Families —— */
+  --font-serif: 'Cormorant Garamond', 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --font-reading: Georgia, 'Times New Roman', 'Songti SC', 'Noto Serif SC', serif;
+
+  /* —— Semantic roles —— */
+  --font-brand: var(--font-serif);      /* 共读 wordmark, titles */
+  --font-body: var(--font-sans);        /* default UI text */
+  --font-quote: var(--font-reading);    /* margin quotes, ritual cards */
+
+  /* —— Size scale (px) —— */
+  --text-display: 42px;   /* hero / stock reader h1 */
+  --text-title: 34px;     /* ritual-card title */
+  --text-heading: 24px;   /* chunk title, section head */
+  --text-subhead: 19px;   /* rail heading */
+  --text-lg: 17px;        /* book title */
+  --text-body-size: 15px; /* default UI */
+  --text-sm: 13px;        /* controls, meta */
+  --text-xs: 11px;        /* eyebrow, badges */
+  --text-2xs: 10px;       /* micro counts */
+
+  /* —— Reading sizes —— */
+  --reading-size: 18px;      /* sheet body */
+  --reading-leading: 34px;   /* ruled-line rhythm */
+  --quote-size: 27px;        /* keepsake-card quote */
+
+  /* —— Weights —— */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;   /* Cormorant top weight; DM Sans headings */
+  --weight-bold: 800;       /* eyebrows, primary buttons, badges */
+
+  /* —— Line height —— */
+  --leading-tight: 1.06;    /* display / titles */
+  --leading-snug: 1.25;     /* book titles */
+  --leading-normal: 1.6;    /* UI body */
+  --leading-relaxed: 1.9;   /* long-form reading */
+
+  /* —— Tracking —— */
+  --tracking-eyebrow: 2px;      /* uppercase kickers */
+  --tracking-brand: 0.5px;
+  --tracking-tight: 0;
+}

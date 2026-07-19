@@ -1,0 +1,139 @@
+/* ============================================================
+   Mitlesen · Colors
+   Two worlds in one system:
+   - COOL screen chrome (lavender-blue) — the reading app
+   - WARM letter-paper (信纸) — the physical page you read on
+   Base values copied from the living reader (public/reader.html).
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* —— Screen surfaces (cool) —— */
+  --bg: #F0F3FA;              /* app background, cool blue-white */
+  --bg2: #E8ECF6;            /* recessed / rail gradient end */
+  --surface: rgba(255, 255, 255, 0.82);   /* glassy panels */
+  --surface-solid: #FFFFFF;
+  --surface-hover: rgba(255, 255, 255, 0.95);
+  --border: rgba(160, 170, 200, 0.18);
+  --border-hover: rgba(130, 145, 185, 0.32);
+
+  /* —— Text (cool ink) —— */
+  --text: #2D3142;           /* primary */
+  --text-mid: #555B74;       /* secondary */
+  --text-dim: #8A90A8;       /* tertiary / meta */
+  --text-faint: #B0B5C8;     /* eyebrows, placeholders */
+
+  /* —— Accent: periwinkle (小奏 / interactive) —— */
+  --accent: #7B8EC6;
+  --accent-deep: #5E6FA8;    /* pressed / links / gradient end */
+  --accent-soft: rgba(123, 142, 198, 0.10);
+  --accent-med: rgba(123, 142, 198, 0.22);
+
+  /* —— Secondary hues —— */
+  --lavender: #C0B3D9;
+  --lavender-soft: rgba(192, 179, 217, 0.15);
+  --rose: #B06B7A;           /* 小烟 / human persona */
+  --rose-soft: rgba(176, 107, 122, 0.10);
+  --mint: #7AB5A0;           /* read / done / success */
+
+  /* —— Letter-paper (信纸): physical, theme-independent —— */
+  --vk-paper: #FBF8F1;       /* warm ivory sheet */
+  --vk-paper2: #F3EEE2;      /* sheet gradient end */
+  --vk-ink: #4A4438;         /* sepia reading ink */
+  --vk-ink-dim: #8A8270;     /* faded ink / captions */
+  --vk-rule: #E7DFC9;        /* ruled lines on paper */
+  --vk-gold: #C9A86A;        /* wax-seal gold, human highlight */
+  --vk-ice: #9CC8DC;         /* cold blue, 小奏 highlight */
+  --vk-ice-soft: rgba(156, 200, 220, 0.16);
+  --vk-env: #EFE9DC;         /* envelope — half a step darker than paper */
+  --vk-env2: #E6DFCE;
+
+  /* —— Snow-blue: 小奏's own voice (margin notes) —— */
+  --snow: #F7F9FC;
+  --snow-ink: #3A4453;
+  --snow-edge: #CBD6E2;
+
+  /* —— Kanon stationery (卡农): 小奏's own letter skin, cooler than the
+     warm reading paper. Physical — never inverts with theme. —— */
+  --kanon-paper: #F7F9FC;
+  --kanon-ink: #3A4453;
+  --kanon-ink-soft: #6B7889;
+  --kanon-rule: #DBE4EE;
+  --kanon-ice: #9FBEDC;      /* first voice (六尾 ice-fox) */
+  --kanon-gold: #C9A86A;     /* second voice / wax (金毛 retriever) */
+  --kanon-hairline: #CBD6E2;
+
+  /* =========================================================
+     Semantic aliases — reference these in components
+     ========================================================= */
+  --text-body: var(--text);
+  --text-muted: var(--text-dim);
+  --text-on-accent: #FFFFFF;
+
+  --surface-card: var(--surface);
+  --surface-page: var(--vk-paper);      /* reading surfaces use paper */
+  --page-ink: var(--vk-ink);
+
+  --interactive: var(--accent);
+  --interactive-strong: var(--accent-deep);
+  --focus-ring: var(--accent);
+
+  --persona-human: var(--rose);         /* 小烟 */
+  --persona-ai: var(--accent-deep);     /* 小奏 */
+  --highlight-human: var(--vk-gold);    /* your underline */
+  --highlight-ai: var(--vk-ice);        /* 小奏's underline */
+
+  --success: var(--mint);
+  --seal: var(--vk-gold);
+
+  /* —— Wax & canon (Vorklang letters) —— */
+  --seal-gold: #C9A86A;             /* the wax-seal colour */
+  --voice-first: var(--vk-ice);     /* canon first voice — ice, leads */
+  --voice-second: var(--seal-gold); /* canon second voice — gold, the echo */
+  --mood-dot: var(--accent);        /* default wax-dot (mood) colour */
+}
+
+/* ============================================================
+   Dark theme — screen chrome cools further; paper warms only
+   slightly (it is "physical", so it never fully inverts).
+   ============================================================ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #1C1E2E;
+  --bg2: #232538;
+  --surface: rgba(38, 42, 60, 0.85);
+  --surface-solid: #282C42;
+  --surface-hover: rgba(46, 50, 68, 0.95);
+  --border: rgba(100, 110, 150, 0.20);
+  --border-hover: rgba(120, 130, 170, 0.32);
+
+  --text: #DFE1F0;
+  --text-mid: #A5AAC8;
+  --text-dim: #6E7494;
+  --text-faint: #4D5272;
+
+  --accent: #8E9FD4;
+  --accent-deep: #A0B0E0;
+  --accent-soft: rgba(142, 159, 212, 0.12);
+  --accent-med: rgba(142, 159, 212, 0.22);
+
+  --lavender: #9C8FBE;
+  --rose: #C88090;
+  --rose-soft: rgba(200, 128, 144, 0.12);
+
+  --vk-paper: #2C2E40;
+  --vk-paper2: #262838;
+  --vk-ink: #D8D5E4;
+  --vk-ink-dim: #8E92AC;
+  --vk-rule: #3A3D52;
+  --vk-ice: #8FBED4;
+  --vk-ice-soft: rgba(143, 190, 212, 0.13);
+  --vk-env: #232536;
+  --vk-env2: #1E2030;
+
+  --snow: #2A2D40;
+  --snow-ink: #CFD3E4;
+  --snow-edge: #4A5066;
+}

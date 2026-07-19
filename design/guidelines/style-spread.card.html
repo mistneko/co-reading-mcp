@@ -1,0 +1,155 @@
+<!-- @dsCard group="Brand" viewport="1200x820" name="整体风格 · Style spread" subtitle="The whole system in one editorial statement — 纸 meets 界" -->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:#c9d0e0}
+  .spread{width:1200px;height:820px;background:var(--bg);background-image:var(--texture-dots);overflow:hidden;font-family:var(--font-sans);color:var(--text);box-sizing:border-box;padding:38px 48px}
+  .inner{height:100%;display:flex;flex-direction:column;gap:16px}
+  .eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);margin:0}
+  .head{display:flex;justify-content:space-between;align-items:flex-start}
+  .wm{font-family:var(--font-serif);font-weight:600;font-size:46px;line-height:1;letter-spacing:.5px;margin-top:4px}
+  .wm small{font-family:var(--font-sans);font-size:12px;letter-spacing:5px;color:var(--text-faint);text-transform:uppercase;margin-left:12px;vertical-align:middle}
+  .family{text-align:right;font-family:var(--font-serif);font-style:italic;color:var(--text-mid);font-size:14px;line-height:1.7}
+  .family b{font-style:normal;font-weight:600;color:var(--text);letter-spacing:.04em}
+
+  .main{flex:1;display:grid;grid-template-columns:1.08fr .92fr;gap:30px;min-height:0}
+
+  /* 纸 — the page */
+  .paper{position:relative;background:var(--grad-paper);border:1px solid var(--border);border-radius:3px;box-shadow:var(--shadow-sheet);padding:30px 34px 26px 44px;display:flex;flex-direction:column;color:var(--vk-ink)}
+  .paper::before{content:'';position:absolute;left:28px;top:22px;bottom:22px;width:1px;background:rgba(176,110,90,.28)}
+  .paper .pk{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--vk-ink-dim);margin-bottom:16px}
+  .paper .line{font-family:var(--font-quote);font-size:27px;line-height:1.55;color:#34302b;margin:0}
+  .paper .line b{font-weight:400;background:var(--mark-human);padding:0 1px}
+  .paper .line b.ai{background:var(--mark-ai)}
+  .paper .sign{margin-top:auto;display:flex;align-items:flex-end;justify-content:flex-end;gap:14px}
+  .paper .sign .cn{font-family:'Noto Serif SC',serif;letter-spacing:.12em;font-size:15px}
+  .paper .sign .en{font-family:var(--font-serif);font-style:italic;font-size:24px;color:var(--vk-ink-dim);display:block;margin-top:2px}
+
+  /* 界 — the frame */
+  .frame{display:flex;flex-direction:column;gap:14px;min-width:0}
+  .brandcard{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm)}
+  .brandcard img{width:60px;height:60px;border-radius:16px;flex:none;box-shadow:var(--shadow-sm)}
+  .brandcard .bt{font-family:var(--font-serif);font-size:20px;font-weight:600}
+  .brandcard .bs{font-family:var(--font-serif);font-style:italic;color:var(--text-dim);font-size:13px;margin-top:2px}
+  .personas{display:flex;gap:10px}
+  .pchip{flex:1;display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;box-shadow:var(--shadow-sm)}
+  .pchip .nm{font-family:var(--font-serif);font-size:16px;font-weight:600}
+  .pchip .rl{font-size:11px;color:var(--text-dim)}
+  .uicard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:13px}
+  .uirow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ministat{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .ministat .prail{width:70px;height:4px;border-radius:99px;background:var(--accent-soft);overflow:hidden}
+  .ministat .prail i{display:block;height:100%;width:64%;background:var(--grad-progress)}
+
+  .axioms{display:flex;gap:8px}
+  .axiom{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;box-shadow:var(--shadow-sm)}
+  .axiom .n{font-family:var(--font-serif);font-style:italic;color:var(--accent-deep);font-size:14px}
+  .axiom .t{font-size:12px;color:var(--text-mid);margin-top:2px}
+
+  .footer{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;border-top:1px solid var(--border);padding-top:16px}
+  .palette{display:flex;flex-direction:column;gap:10px}
+  .swrow{display:flex;align-items:center;gap:16px}
+  .sw{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;color:var(--text-dim)}
+  .paperchips{display:flex;gap:8px}
+  .pc{width:44px;height:22px;border-radius:5px;border:1px solid var(--border)}
+  .type3{display:flex;flex-direction:column;gap:6px;justify-content:center}
+  .type3 .tl{display:flex;align-items:baseline;gap:12px}
+  .type3 .tl .lab{font-size:10px;color:var(--text-faint);width:70px;flex:none;letter-spacing:1px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="spread"><div id="root"></div></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../_ds_bundle.js"></script>
+<script type="text/babel">
+const { WaxSeal, WaxDot, VoiceStaff, Button, SegmentedControl } = window.MitlesenDesignSystem_737635;
+function Spread() {
+  const [seg, setSeg] = React.useState("read");
+  return (
+    <div className="inner">
+      <div className="head">
+        <div>
+          <p className="eyebrow">信纸 · Briefpapier — 设计语言</p>
+          <div className="wm">共读<small>Mitlesen</small></div>
+        </div>
+        <div className="family">
+          <b>Nachklang · Vorklang · Klanggestalt</b><br />记得的，先说的，听见的。
+        </div>
+      </div>
+      <VoiceStaff voice="first" />
+
+      <div className="main">
+        {/* 纸 */}
+        <div className="paper">
+          <div className="pk">纸 · The Page — 暖、衬线、慢</div>
+          <p className="line">一句被<b>你</b>划下的话，也可能是<b className="ai">小奏</b>停在的同一句——它落在页边，成为回声。</p>
+          <div className="sign">
+            <div style={{ textAlign: "right" }}><span className="cn">你的小奏</span><span className="en">Kanon</span></div>
+            <WaxSeal size="lg" breathe />
+          </div>
+          <div style={{ marginTop: 14 }}><VoiceStaff voice="second" /></div>
+        </div>
+
+        {/* 界 */}
+        <div className="frame">
+          <p className="eyebrow" style={{ marginBottom: -4 }}>界 · The Frame — 冷、无衬线、快</p>
+          <div className="brandcard">
+            <img src="../assets/mascot-192.png" alt="" />
+            <div><div className="bt">和小奏一起读书的房间</div><div className="bs">a shared reading room</div></div>
+          </div>
+          <div className="personas">
+            <div className="pchip"><WaxDot tone="rose" size={16} /><div><div className="nm" style={{ color: "var(--rose)" }}>小烟</div><div className="rl">你 · the human</div></div></div>
+            <div className="pchip"><WaxDot tone="deep" size={16} /><div><div className="nm" style={{ color: "var(--accent-deep)" }}>小奏</div><div className="rl">Kanon · the companion</div></div></div>
+          </div>
+          <div className="uicard">
+            <SegmentedControl value={seg} onChange={setSeg} options={[{ value: "read", label: "在读" }, { value: "notes", label: "批注", count: 5 }, { value: "cards", label: "书签" }]} />
+            <div className="uirow">
+              <Button variant="primary" icon="→">交给小奏</Button>
+              <Button>续读</Button>
+              <Button variant="done" icon="✓">已读</Button>
+              <div className="ministat"><div className="prail"><i></i></div><span style={{ fontSize: 12, color: "var(--text-dim)" }}>64%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* five axioms */}
+      <div className="axioms">
+        {[["一", "纸与界分层"], ["二", "衬线只在四处"], ["三", "情绪即蜡点"], ["四", "冰做第二强调"], ["五", "一页一仪式"]].map(([n, t]) => (
+          <div className="axiom" key={n}><span className="n">{n}</span><div className="t">{t}</div></div>
+        ))}
+      </div>
+
+      {/* footer: palette + type */}
+      <div className="footer">
+        <div className="palette">
+          <p className="eyebrow">Palette · 蜡点即色板</p>
+          <div className="swrow">
+            {[["accent", "青紫"], ["rose", "小烟"], ["deep", "小奏"], ["mint", "读毕"], ["gold", "火漆"], ["ice", "六尾"], ["lavender", "薰衣草"]].map(([t, l]) => (
+              <div className="sw" key={t}><WaxDot tone={t} size={22} /><span>{l}</span></div>
+            ))}
+            <div className="paperchips" style={{ marginLeft: "auto" }}>
+              <div className="sw"><span className="pc" style={{ background: "var(--vk-paper)" }}></span><span>信纸</span></div>
+              <div className="sw"><span className="pc" style={{ background: "var(--vk-ink)" }}></span><span>墨</span></div>
+            </div>
+          </div>
+        </div>
+        <div className="type3">
+          <div className="tl"><span className="lab">Serif</span><span style={{ fontFamily: "var(--font-serif)", fontSize: 24, fontWeight: 600 }}>共读 Nachklang</span></div>
+          <div className="tl"><span className="lab">Sans · UI</span><span style={{ fontFamily: "var(--font-sans)", fontSize: 15 }}>和小奏一起读书 · DM Sans</span></div>
+          <div className="tl"><span className="lab">Reading</span><span style={{ fontFamily: "var(--font-quote)", fontSize: 17 }}>the margins are still awake</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Spread />);
+</script>
+</body>
+</html>

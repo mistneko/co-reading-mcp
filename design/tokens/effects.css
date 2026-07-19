@@ -1,0 +1,54 @@
+/* ============================================================
+   Mitlesen · Effects — radii, shadows, blur, motion, textures
+   Soft, low-contrast shadows; generous rounding; frosted glass
+   on floating chrome; warm gradient washes on keepsake paper.
+   ============================================================ */
+
+:root {
+  /* —— Radii —— */
+  --radius-xs: 6px;      /* status dots, tiny chips */
+  --radius-sm: 10px;     /* books, notes, icon buttons */
+  --radius: 16px;        /* default panels */
+  --radius-lg: 20px;     /* bottom-sheet composer */
+  --radius-card: 34px;   /* ritual keepsake card */
+  --radius-pill: 999px;  /* buttons, badges, progress rails */
+  --radius-sheet: 3px;   /* letter-paper (barely rounded) */
+
+  /* —— Shadows (cool, low) —— */
+  --shadow-sm: 0 1px 4px rgba(45, 49, 66, 0.04);
+  --shadow: 0 2px 12px rgba(45, 49, 66, 0.05);
+  --shadow-lg: 0 4px 24px rgba(45, 49, 66, 0.07);
+  --shadow-book-active: 0 3px 16px rgba(123, 142, 198, 0.08);
+  --shadow-sheet: 0 6px 22px -8px rgba(45, 49, 66, 0.22), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
+  --shadow-card: 0 18px 54px rgba(70, 54, 42, 0.13), inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+  --shadow-sheet-modal: 0 -8px 30px rgba(20, 22, 38, 0.18);
+
+  /* —— Frosted glass —— */
+  --blur-chrome: 12px;   /* top bar */
+  --blur-panel: 22px;    /* floating panels */
+
+  /* —— Highlight washes (underline the last 42% of the line) —— */
+  --mark-human: linear-gradient(transparent 58%, color-mix(in srgb, var(--vk-gold) 42%, transparent) 58%);
+  --mark-ai: linear-gradient(transparent 58%, color-mix(in srgb, var(--vk-ice) 50%, transparent) 58%);
+  --mark-active: color-mix(in srgb, var(--vk-gold) 34%, transparent);
+
+  /* —— Gradients —— */
+  --grad-accent: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  --grad-rail: linear-gradient(180deg, var(--bg), var(--bg2));
+  --grad-paper: linear-gradient(180deg, var(--vk-paper), var(--vk-paper2));
+  --grad-card: linear-gradient(145deg, #FBF6EE, #EEEAE2 58%, #E2E4DC); /* @kind color */
+  --grad-progress: linear-gradient(90deg, var(--accent), var(--accent-deep));
+  --grad-seal: radial-gradient(circle at 36% 32%, #D9BC85, var(--seal-gold) 64%, #B39053 100%); /* @kind color */
+  --shadow-seal: 0 2px 8px rgba(201, 168, 106, 0.45), inset 0 0 0 3px rgba(247, 249, 252, 0.55);
+
+  /* —— Paper texture: faint dot grid (data-URI, no asset needed) —— */
+  --texture-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='none'/%3E%3Ccircle cx='2' cy='2' r='.4' fill='%239098a8' opacity='.03'/%3E%3C/svg%3E"); /* @kind other */
+  /* ruled paper lines for the reading sheet */
+  --texture-rule: repeating-linear-gradient(to bottom, transparent 0, transparent 33px, var(--vk-rule) 33px, var(--vk-rule) 34px);
+
+  /* —— Motion —— */
+  --ease-out: cubic-bezier(0.3, 0.8, 0.3, 1); /* @kind other */
+  --dur-fast: 0.15s; /* @kind other */
+  --dur: 0.25s; /* @kind other */
+  --dur-slow: 0.4s; /* @kind other */
+}

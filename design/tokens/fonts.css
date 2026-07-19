@@ -1,0 +1,17 @@
+/* ============================================================
+   Mitlesen · Fonts
+   All three brand webfonts are served by Google Fonts, exactly
+   as the living product loads them. The @import below pulls the
+   real @font-face rules into the design-system closure.
+
+   - Cormorant Garamond  (serif display) 400/500/600 + italics
+   - DM Sans             (sans UI)        300/400/500/600
+   - Noto Serif SC       (CJK serif)      400/500/600
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap');
+
+/* System-installed CJK/serif faces referenced in the font stacks. Declared
+   with local() only — they ship with the OS, so there is no binary to fetch
+   and nothing to substitute; this just lets them resolve cleanly. */
+@font-face { font-family: 'Songti SC'; src: local('Songti SC'), local('STSong'); }

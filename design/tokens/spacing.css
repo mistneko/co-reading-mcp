@@ -1,0 +1,39 @@
+/* ============================================================
+   Mitlesen · Spacing
+   A calm 2px-based rhythm. Named tokens map to the real paddings
+   and gaps used across the reader (rail 14px, cards 18px, etc).
+   ============================================================ */
+
+:root {
+  /* —— Raw scale —— */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-11: 22px;
+  --space-12: 24px;
+  --space-14: 28px;
+  --space-16: 34px;
+  --space-20: 40px;
+
+  /* —— Semantic —— */
+  --card-pad: 18px;      /* book / note inner padding */
+  --card-gap: 14px;      /* gap between stacked cards */
+  --rail-pad: 14px;      /* sidebar padding */
+  --reader-pad: 22px;    /* reading column padding */
+  --sheet-pad: 34px;     /* letter-paper inner padding */
+  --control-pad-x: 15px; /* pill button horizontal padding */
+  --control-pad-y: 7px;
+
+  /* —— Layout —— */
+  --rail-width: 312px;   /* bookshelf / TOC column */
+  --nav-h: 58px;         /* top bar height */
+  --reading-measure: 720px;  /* max reading column width */
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}

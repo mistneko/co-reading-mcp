@@ -1,0 +1,68 @@
+<!-- @dsCard group="Components" viewport="700x360" name="Letters · wax seal, wax dots & canon voices" subtitle="WaxSeal, WaxDot, VoiceStaff — the 信纸 signature atoms" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:var(--bg);background-image:var(--texture-dots);color:var(--text);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+  .wrap{padding:24px 28px;display:flex;flex-direction:column;gap:20px}
+  .label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint)}
+  .row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .seals{display:flex;align-items:center;gap:16px}
+  .dots{display:flex;align-items:center;gap:14px}
+  .dcap{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;color:var(--text-dim)}
+  .voice-demo{background:var(--kanon-paper);border:1px solid var(--kanon-hairline);border-radius:4px;padding:14px 18px}
+  .voice-demo .mid{font-family:var(--font-serif);font-style:italic;color:var(--kanon-ink-soft);font-size:13px;text-align:center;padding:10px 0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { WaxSeal, WaxDot, VoiceStaff } = window.MitlesenDesignSystem_737635;
+function Demo() {
+  return (
+    <div className="wrap">
+      <div className="row">
+        <div style={{display:"flex",flexDirection:"column",gap:9}}>
+          <span className="label">Wax seal · 火漆</span>
+          <div className="seals">
+            <WaxSeal size="lg" breathe />
+            <WaxSeal size="md" />
+            <WaxSeal size="sm" />
+            <WaxSeal size="dot" />
+            <WaxSeal size="md" broken />
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:9,marginLeft:"auto"}}>
+          <span className="label">Wax dots · 蜡点</span>
+          <div className="dots">
+            <div className="dcap"><WaxDot tone="rose" size={14}/>rose</div>
+            <div className="dcap"><WaxDot tone="accent" size={14}/>accent</div>
+            <div className="dcap"><WaxDot tone="mint" size={14}/>mint</div>
+            <div className="dcap"><WaxDot tone="gold" size={14}/>gold</div>
+            <div className="dcap"><WaxDot tone="ice" size={14}/>ice</div>
+            <div className="dcap"><WaxDot hollow size={14}/>empty</div>
+          </div>
+        </div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:9}}>
+        <span className="label">Canon voices · 双声部</span>
+        <div className="voice-demo">
+          <VoiceStaff voice="first" />
+          <div className="mid">信身夹在两个声部之间 · the body sits between two voices</div>
+          <VoiceStaff voice="second" />
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>

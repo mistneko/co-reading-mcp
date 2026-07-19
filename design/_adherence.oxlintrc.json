@@ -1,0 +1,539 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/core/**",
+              "components/feedback/**",
+              "components/letters/**",
+              "components/reading/**",
+              "ui_kits/mitlesen-mobile/**",
+              "ui_kits/mitlesen-reader/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Songti SC|Cormorant Garamond|DM Sans|Noto Serif SC))/i]",
+        "message": "Font not provided by the design system. Available: Songti SC, Cormorant Garamond, DM Sans, Noto Serif SC."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|children|key|ref|className|style|children)$/]",
+        "message": "<Badge> doesn't accept that prop. Declared props: tone, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:accent|gold|rose|plain)$/]",
+        "message": "<Badge> tone must be one of 'accent' | 'gold' | 'rose' | 'plain'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='BookCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|author|read|total|annotationCount|active|onDelete|key|ref|className|style|children)$/]",
+        "message": "<BookCard> doesn't accept that prop. Declared props: title, author, read, total, annotationCount, active, onDelete."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|block|icon|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, block, icon, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:default|primary|done)$/]",
+        "message": "<Button> variant must be one of 'default' | 'primary' | 'done'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<Button> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ChapterRow'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|read|current|annotationCount|key|ref|className|style|children)$/]",
+        "message": "<ChapterRow> doesn't accept that prop. Declared props: title, read, current, annotationCount."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='EmptyState'] > JSXAttribute > JSXIdentifier[name!=/^(?:seal|children|key|ref|className|style|children)$/]",
+        "message": "<EmptyState> doesn't accept that prop. Declared props: seal, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Eyebrow'] > JSXAttribute > JSXIdentifier[name!=/^(?:as|children|key|ref|className|style|children)$/]",
+        "message": "<Eyebrow> doesn't accept that prop. Declared props: as, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Highlight'] > JSXAttribute > JSXIdentifier[name!=/^(?:by|active|children|key|ref|className|style|children)$/]",
+        "message": "<Highlight> doesn't accept that prop. Declared props: by, active, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Highlight'] > JSXAttribute[name.name='by'] > Literal[value!=/^(?:human|ai)$/]",
+        "message": "<Highlight> by must be one of 'human' | 'ai'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute > JSXIdentifier[name!=/^(?:size|bare|label|children|key|ref|className|style|children)$/]",
+        "message": "<IconButton> doesn't accept that prop. Declared props: size, bare, label, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md)$/]",
+        "message": "<IconButton> size must be one of 'sm' | 'md'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='MarginNote'] > JSXAttribute > JSXIdentifier[name!=/^(?:persona|personaName|quote|open|active|replyCount|onReply|replies|children|key|ref|className|style|children)$/]",
+        "message": "<MarginNote> doesn't accept that prop. Declared props: persona, personaName, quote, open, active, replyCount, onReply, replies, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='MarginNote'] > JSXAttribute[name.name='persona'] > Literal[value!=/^(?:ai|human)$/]",
+        "message": "<MarginNote> persona must be one of 'ai' | 'human'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PersonaTag'] > JSXAttribute > JSXIdentifier[name!=/^(?:persona|name|key|ref|className|style|children)$/]",
+        "message": "<PersonaTag> doesn't accept that prop. Declared props: persona, name."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PersonaTag'] > JSXAttribute[name.name='persona'] > Literal[value!=/^(?:ai|human)$/]",
+        "message": "<PersonaTag> persona must be one of 'ai' | 'human'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ProgressRail'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|read|total|showLabel|key|ref|className|style|children)$/]",
+        "message": "<ProgressRail> doesn't accept that prop. Declared props: value, read, total, showLabel."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='RitualCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:art|size|name|kicker|title|subtitle|quote|note|footer|seed|children|key|ref|className|style|children)$/]",
+        "message": "<RitualCard> doesn't accept that prop. Declared props: art, size, name, kicker, title, subtitle, quote, note, footer, seed, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='RitualCard'] > JSXAttribute[name.name='art'] > Literal[value!=/^(?:fold|ripple|stardust|lastfold)$/]",
+        "message": "<RitualCard> art must be one of 'fold' | 'ripple' | 'stardust' | 'lastfold'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='RitualCard'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:compact|standard|tall)$/]",
+        "message": "<RitualCard> size must be one of 'compact' | 'standard' | 'tall'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SegmentedOption'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|count|key|ref|className|style|children)$/]",
+        "message": "<SegmentedOption> doesn't accept that prop. Declared props: value, label, count."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Sheet'] > JSXAttribute > JSXIdentifier[name!=/^(?:ruled|children|key|ref|className|style|children)$/]",
+        "message": "<Sheet> doesn't accept that prop. Declared props: ruled, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Toast'] > JSXAttribute > JSXIdentifier[name!=/^(?:loading|icon|children|key|ref|className|style|children)$/]",
+        "message": "<Toast> doesn't accept that prop. Declared props: loading, icon, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='VoiceStaff'] > JSXAttribute > JSXIdentifier[name!=/^(?:voice|animate|key|ref|className|style|children)$/]",
+        "message": "<VoiceStaff> doesn't accept that prop. Declared props: voice, animate."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='VoiceStaff'] > JSXAttribute[name.name='voice'] > Literal[value!=/^(?:first|second)$/]",
+        "message": "<VoiceStaff> voice must be one of 'first' | 'second'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='WaxDot'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|color|size|hollow|key|ref|className|style|children)$/]",
+        "message": "<WaxDot> doesn't accept that prop. Declared props: tone, color, size, hollow."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='WaxDot'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:accent|deep|rose|mint|gold|lavender|ice)$/]",
+        "message": "<WaxDot> tone must be one of 'accent' | 'deep' | 'rose' | 'mint' | 'gold' | 'lavender' | 'ice'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='WaxSeal'] > JSXAttribute > JSXIdentifier[name!=/^(?:size|breathe|broken|label|key|ref|className|style|children)$/]",
+        "message": "<WaxSeal> doesn't accept that prop. Declared props: size, breathe, broken, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='WaxSeal'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:dot|sm|md|lg)$/]",
+        "message": "<WaxSeal> size must be one of 'dot' | 'sm' | 'md' | 'lg'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Badge": {
+        "replaces": []
+      },
+      "BookCard": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "ChapterRow": {
+        "replaces": []
+      },
+      "EmptyState": {
+        "replaces": []
+      },
+      "Eyebrow": {
+        "replaces": []
+      },
+      "Highlight": {
+        "replaces": []
+      },
+      "IconButton": {
+        "replaces": []
+      },
+      "MarginNote": {
+        "replaces": []
+      },
+      "PersonaTag": {
+        "replaces": []
+      },
+      "ProgressRail": {
+        "replaces": []
+      },
+      "RitualCard": {
+        "replaces": []
+      },
+      "SegmentedOption": {
+        "replaces": []
+      },
+      "Sheet": {
+        "replaces": []
+      },
+      "Toast": {
+        "replaces": []
+      },
+      "VoiceStaff": {
+        "replaces": []
+      },
+      "WaxDot": {
+        "replaces": []
+      },
+      "WaxSeal": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent",
+      "--accent-deep",
+      "--accent-med",
+      "--accent-soft",
+      "--bg",
+      "--bg2",
+      "--blur-chrome",
+      "--blur-panel",
+      "--border",
+      "--border-hover",
+      "--card-gap",
+      "--card-pad",
+      "--control-pad-x",
+      "--control-pad-y",
+      "--dur",
+      "--dur-fast",
+      "--dur-slow",
+      "--ease-out",
+      "--focus-ring",
+      "--font-body",
+      "--font-brand",
+      "--font-quote",
+      "--font-reading",
+      "--font-sans",
+      "--font-serif",
+      "--grad-accent",
+      "--grad-card",
+      "--grad-paper",
+      "--grad-progress",
+      "--grad-rail",
+      "--grad-seal",
+      "--highlight-ai",
+      "--highlight-human",
+      "--interactive",
+      "--interactive-strong",
+      "--kanon-gold",
+      "--kanon-hairline",
+      "--kanon-ice",
+      "--kanon-ink",
+      "--kanon-ink-soft",
+      "--kanon-paper",
+      "--kanon-rule",
+      "--lavender",
+      "--lavender-soft",
+      "--leading-normal",
+      "--leading-relaxed",
+      "--leading-snug",
+      "--leading-tight",
+      "--mark-active",
+      "--mark-ai",
+      "--mark-human",
+      "--mint",
+      "--mood-dot",
+      "--nav-h",
+      "--page-ink",
+      "--persona-ai",
+      "--persona-human",
+      "--quote-size",
+      "--radius",
+      "--radius-card",
+      "--radius-lg",
+      "--radius-pill",
+      "--radius-sheet",
+      "--radius-sm",
+      "--radius-xs",
+      "--rail-pad",
+      "--rail-width",
+      "--reader-pad",
+      "--reading-leading",
+      "--reading-measure",
+      "--reading-size",
+      "--rose",
+      "--rose-soft",
+      "--safe-b",
+      "--seal",
+      "--seal-gold",
+      "--shadow",
+      "--shadow-book-active",
+      "--shadow-card",
+      "--shadow-lg",
+      "--shadow-seal",
+      "--shadow-sheet",
+      "--shadow-sheet-modal",
+      "--shadow-sm",
+      "--sheet-pad",
+      "--snow",
+      "--snow-edge",
+      "--snow-ink",
+      "--space-1",
+      "--space-10",
+      "--space-11",
+      "--space-12",
+      "--space-14",
+      "--space-16",
+      "--space-2",
+      "--space-20",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--space-9",
+      "--success",
+      "--surface",
+      "--surface-card",
+      "--surface-hover",
+      "--surface-page",
+      "--surface-solid",
+      "--text",
+      "--text-2xs",
+      "--text-body",
+      "--text-body-size",
+      "--text-dim",
+      "--text-display",
+      "--text-faint",
+      "--text-heading",
+      "--text-lg",
+      "--text-mid",
+      "--text-muted",
+      "--text-on-accent",
+      "--text-sm",
+      "--text-subhead",
+      "--text-title",
+      "--text-xs",
+      "--texture-dots",
+      "--texture-rule",
+      "--tracking-brand",
+      "--tracking-eyebrow",
+      "--tracking-tight",
+      "--vk-env",
+      "--vk-env2",
+      "--vk-gold",
+      "--vk-ice",
+      "--vk-ice-soft",
+      "--vk-ink",
+      "--vk-ink-dim",
+      "--vk-paper",
+      "--vk-paper2",
+      "--vk-rule",
+      "--voice-first",
+      "--voice-second",
+      "--weight-bold",
+      "--weight-light",
+      "--weight-medium",
+      "--weight-regular",
+      "--weight-semibold"
+    ],
+    "tokenKinds": {
+      "--bg": "color",
+      "--bg2": "color",
+      "--surface": "color",
+      "--surface-solid": "color",
+      "--surface-hover": "color",
+      "--border": "color",
+      "--border-hover": "color",
+      "--text": "font",
+      "--text-mid": "font",
+      "--text-dim": "font",
+      "--text-faint": "font",
+      "--accent": "color",
+      "--accent-deep": "color",
+      "--accent-soft": "color",
+      "--accent-med": "color",
+      "--lavender": "color",
+      "--lavender-soft": "color",
+      "--rose": "color",
+      "--rose-soft": "color",
+      "--mint": "color",
+      "--vk-paper": "color",
+      "--vk-paper2": "color",
+      "--vk-ink": "color",
+      "--vk-ink-dim": "color",
+      "--vk-rule": "color",
+      "--vk-gold": "color",
+      "--vk-ice": "color",
+      "--vk-ice-soft": "color",
+      "--vk-env": "color",
+      "--vk-env2": "color",
+      "--snow": "color",
+      "--snow-ink": "color",
+      "--snow-edge": "color",
+      "--kanon-paper": "color",
+      "--kanon-ink": "color",
+      "--kanon-ink-soft": "color",
+      "--kanon-rule": "color",
+      "--kanon-ice": "color",
+      "--kanon-gold": "color",
+      "--kanon-hairline": "color",
+      "--text-body": "font",
+      "--text-muted": "font",
+      "--text-on-accent": "font",
+      "--surface-card": "color",
+      "--surface-page": "color",
+      "--page-ink": "color",
+      "--interactive": "color",
+      "--interactive-strong": "color",
+      "--focus-ring": "color",
+      "--persona-human": "color",
+      "--persona-ai": "color",
+      "--highlight-human": "color",
+      "--highlight-ai": "color",
+      "--success": "color",
+      "--seal": "color",
+      "--seal-gold": "color",
+      "--voice-first": "color",
+      "--voice-second": "color",
+      "--mood-dot": "color",
+      "--font-serif": "font",
+      "--font-sans": "font",
+      "--font-reading": "font",
+      "--font-brand": "font",
+      "--font-body": "font",
+      "--font-quote": "font",
+      "--text-display": "font",
+      "--text-title": "font",
+      "--text-heading": "font",
+      "--text-subhead": "font",
+      "--text-lg": "font",
+      "--text-body-size": "font",
+      "--text-sm": "font",
+      "--text-xs": "font",
+      "--text-2xs": "font",
+      "--reading-size": "spacing",
+      "--reading-leading": "font",
+      "--quote-size": "spacing",
+      "--weight-light": "font",
+      "--weight-regular": "font",
+      "--weight-medium": "font",
+      "--weight-semibold": "font",
+      "--weight-bold": "font",
+      "--leading-tight": "font",
+      "--leading-snug": "font",
+      "--leading-normal": "font",
+      "--leading-relaxed": "font",
+      "--tracking-eyebrow": "font",
+      "--tracking-brand": "font",
+      "--tracking-tight": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--space-9": "spacing",
+      "--space-10": "spacing",
+      "--space-11": "spacing",
+      "--space-12": "spacing",
+      "--space-14": "spacing",
+      "--space-16": "spacing",
+      "--space-20": "spacing",
+      "--card-pad": "spacing",
+      "--card-gap": "spacing",
+      "--rail-pad": "spacing",
+      "--reader-pad": "spacing",
+      "--sheet-pad": "spacing",
+      "--control-pad-x": "spacing",
+      "--control-pad-y": "spacing",
+      "--rail-width": "spacing",
+      "--nav-h": "spacing",
+      "--reading-measure": "spacing",
+      "--safe-b": "color",
+      "--radius-xs": "radius",
+      "--radius-sm": "radius",
+      "--radius": "radius",
+      "--radius-lg": "radius",
+      "--radius-card": "radius",
+      "--radius-pill": "radius",
+      "--radius-sheet": "radius",
+      "--shadow-sm": "shadow",
+      "--shadow": "shadow",
+      "--shadow-lg": "shadow",
+      "--shadow-book-active": "shadow",
+      "--shadow-sheet": "shadow",
+      "--shadow-card": "shadow",
+      "--shadow-sheet-modal": "shadow",
+      "--blur-chrome": "spacing",
+      "--blur-panel": "spacing",
+      "--mark-human": "color",
+      "--mark-ai": "color",
+      "--mark-active": "color",
+      "--grad-accent": "color",
+      "--grad-rail": "color",
+      "--grad-paper": "color",
+      "--grad-card": "color",
+      "--grad-progress": "color",
+      "--grad-seal": "color",
+      "--shadow-seal": "shadow",
+      "--texture-dots": "other",
+      "--texture-rule": "color",
+      "--ease-out": "other",
+      "--dur-fast": "other",
+      "--dur": "other",
+      "--dur-slow": "other"
+    },
+    "fontFamilies": [
+      "Cormorant Garamond",
+      "DM Sans",
+      "Noto Serif SC",
+      "Songti SC"
+    ]
+  }
+}

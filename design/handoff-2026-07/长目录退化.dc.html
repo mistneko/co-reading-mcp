@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/tokens/colors.css">
+<link rel="stylesheet" href="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/tokens/typography.css">
+<link rel="stylesheet" href="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/tokens/effects.css">
+<link rel="stylesheet" href="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/styles.css">
+<script src="_ds/mitlesen-design-system-73763577-bf39-452b-be9f-dfc5c9e1422c/_ds_bundle.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);background-image:var(--texture-dots);color:var(--text);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+  a{color:var(--accent-deep);text-decoration:none}
+  a:hover{color:var(--accent)}
+  .cap{display:block;font-family:var(--font-sans);font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px}
+  @keyframes sheetIn{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</helmet>
+
+<section style="position:relative;padding:46px 52px 60px;min-width:1420px;border-bottom:1px solid var(--border)">
+  <header style="max-width:960px;margin:8px 0 30px">
+    <div class="cap" style="color:var(--accent-deep)">施工反馈 §二-1 · 接线稿</div>
+    <h1 style="font-family:var(--font-serif);font-weight:600;font-size:34px;line-height:1.15;margin:0 0 10px;color:var(--text)">桌面选纸器 · reader.html</h1>
+    <p style="margin:0;font-size:15px;line-height:1.65;color:var(--text-mid);text-wrap:pretty;max-width:760px">桌面顶栏现只有 ◐(明暗)。补一枚<strong style="color:var(--text)">「纸」控件</strong>:写 <code style="font-size:13px">[data-paper]</code>,与 ◐ 正交。点开选纸,右侧预览即时换纸——纸色不随明暗变。</p>
+  </header>
+
+  <div id="3a" style="position:relative;padding-top:34px">
+    <div style="position:absolute;top:0;left:0;font-family:var(--font-sans);font-size:12px;letter-spacing:1px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:3px 11px">3a · 顶栏选纸器</div>
+    <div style="display:flex;gap:34px;align-items:flex-start;flex-wrap:wrap">
+
+      <!-- topbar + popover -->
+      <div style="width:520px;flex:none">
+        <span class="cap" style="color:var(--accent-deep)">顶栏 · 「纸」控件</span>
+        <div style="border:1px solid var(--border-hover);border-radius:16px;box-shadow:var(--shadow-lg);background:var(--surface-solid);display:flex;flex-direction:column">
+          <div style="height:58px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--border);background:var(--surface);border-radius:16px 16px 0 0">
+            <x-import component-from-global-scope="MitlesenDesignSystem_737635.IconButton" label="书架" hint-size="34px,34px">☰</x-import>
+            <div style="font-family:var(--font-serif);font-weight:600;font-size:19px;letter-spacing:.5px">共读<span style="font-family:var(--font-sans);font-size:9px;letter-spacing:2px;color:var(--text-faint);margin-left:6px">MITLESEN</span></div>
+            <div style="flex:1;font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--text-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:8px">夜间飞行</div>
+            <button onClick="{{ onTogglePicker }}" style="display:flex;align-items:center;gap:7px;height:34px;padding:0 11px 0 8px;border:1px solid var(--border-hover);background:var(--surface-solid);border-radius:999px;cursor:pointer;color:var(--text-mid);font-family:var(--font-sans);font-size:13px;transition:var(--dur-fast)" style-hover="border-color:var(--accent);color:var(--accent-deep)">
+              <span style="{{ curSwStyle }}"></span>纸 · {{ curPaperZh }}
+            </button>
+            <x-import component-from-global-scope="MitlesenDesignSystem_737635.IconButton" label="明暗" hint-size="34px,34px">◐</x-import>
+          </div>
+          <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-end;margin:12px 14px 16px;width:246px;background:var(--surface-solid);border:1px solid var(--border-hover);border-radius:14px;box-shadow:var(--shadow-lg);padding:10px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin:2px 4px 4px">
+                <span class="cap" style="margin:0">选纸 · PAPER</span>
+                <span style="font-size:10.5px;color:var(--text-faint)">与 ◐ 无关</span>
+              </div>
+              <sc-for list="{{ paperOpts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onPick }}" style="{{ o.style }}" style-hover="border-color:var(--border-hover)">
+                  <span style="{{ o.swStyle }}"></span>
+                  <span style="flex:1"><span style="font-family:var(--font-serif);font-size:15px;color:var(--text)">{{ o.zh }}</span><span style="font-family:var(--font-sans);font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);margin-left:6px">{{ o.en }}</span></span>
+                  <sc-if value="{{ o.active }}" hint-placeholder-val="{{ true }}"><span style="color:var(--accent-deep);font-size:13px">✓</span></sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- live preview -->
+      <div style="width:258px;flex:none">
+        <span class="cap" style="color:var(--accent-deep)">实时预览 · 纸</span>
+        <div style="{{ paperSheetStyle }}">
+          <div style="font-family:var(--font-serif);font-size:19px;font-weight:600"><span style="{{ paperTitleStyle }}">共读</span></div>
+          <div style="{{ paperTextStyle }}">纸是物件——不随界反色。换纸只改这张纸的颜色,与明暗(◐)无关。</div>
+          <div style="margin-top:12px;font-family:var(--font-serif);font-style:italic;font-size:12px"><span style="{{ paperCapStyle }}">— 当前:{{ curPaperZh }}纸</span></div>
+        </div>
+      </div>
+
+      <!-- notes -->
+      <div style="width:300px;flex:none;display:flex;flex-direction:column;gap:12px">
+        <span class="cap">接线 · 三点</span>
+        <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+          <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">① 纸是 chrome 控件</span>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">放顶栏(界),点击写 <code style="font-size:12px">documentElement.dataset.paper</code>;<code style="font-size:12px">[data-paper]</code> 驱动纸族 token。与 ◐(<code style="font-size:12px">[data-theme]</code>)正交。</p>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+          <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">② 默认与暗色</span>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">默认 warm;暗色 chrome 下选纸器<strong style="color:var(--text)">默认落 night</strong> 纸——是选纸,不是反色。</p>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+          <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">③ 跨端同步</span>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">手机 kit 已有 <code style="font-size:12px">localStorage("mitlesen-paper")</code>;桌面共用同一 key,选纸跨端一致。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section style="position:relative;padding:46px 52px 60px;min-width:1420px;border-bottom:1px solid var(--border)">
+  <header style="max-width:960px;margin:8px 0 30px">
+    <div class="cap" style="color:var(--accent-deep)">施工侧反馈 §二 · 设计裁决</div>
+    <h1 style="font-family:var(--font-serif);font-weight:600;font-size:34px;line-height:1.15;margin:0 0 10px;color:var(--text)">两处矛盾的裁决 · 信箱与纸</h1>
+    <p style="margin:0;font-size:15px;line-height:1.65;color:var(--text-mid);text-wrap:pretty;max-width:760px">DS 内部两处自相矛盾,给出定论并落成可看的稿。左:第二个底部 tab 定为<strong style="color:var(--text)">信箱</strong>,v1 只接现成的本地卡片信箱(零后端改动)。右:纸<strong style="color:var(--text)">不随主题反色</strong>——换纸与暗色是两回事,在 token 层拆开。</p>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:52px;align-items:flex-start">
+
+    <!-- ===== 2a · 信箱 ===== -->
+    <div id="2a" style="position:relative;width:648px;padding-top:34px">
+      <div style="position:absolute;top:0;left:0;font-family:var(--font-sans);font-size:12px;letter-spacing:1px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:3px 11px">2a · 第二个 tab = 信箱</div>
+      <div style="display:flex;gap:30px;align-items:flex-start">
+        <div style="width:300px;flex:none">
+          <span class="cap" style="color:var(--accent-deep)">信箱 · 本地卡片信箱 v1</span>
+          <div style="background:#14161f;padding:9px;border-radius:44px;box-shadow:var(--shadow-lg),0 30px 60px -20px rgba(20,22,38,.5)">
+            <div style="position:relative;height:600px;border-radius:34px;overflow:hidden;background:var(--bg);background-image:var(--texture-dots);display:flex;flex-direction:column">
+              <div style="padding:20px 18px 12px;flex:none">
+                <x-import component-from-global-scope="MitlesenDesignSystem_737635.Eyebrow" hint-size="auto,14px">Vorklang · 慢递</x-import>
+                <div style="font-family:var(--font-serif);font-size:26px;font-weight:600;color:var(--text);margin-top:2px">信箱</div>
+              </div>
+              <div style="flex:1;min-height:0;overflow-y:auto;padding:0 14px 12px">
+                <sc-for list="{{ inbox }}" as="it" hint-placeholder-count="3">
+                  <div style="margin-bottom:12px">
+                    <sc-if value="{{ it.sealed }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm)">
+                        <x-import component-from-global-scope="MitlesenDesignSystem_737635.WaxSeal" size="lg" breathe="{{ true }}" label="未拆封" hint-size="46px,46px"></x-import>
+                        <div style="flex:1;min-width:0">
+                          <div class="cap" style="margin:0 0 3px">{{ it.kicker }}</div>
+                          <div style="font-family:var(--font-serif);font-size:16px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.title }}</div>
+                          <div style="font-family:var(--font-serif);font-style:italic;font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.subtitle }}</div>
+                        </div>
+                        <x-import component-from-global-scope="MitlesenDesignSystem_737635.Button" variant="primary" size="sm" icon="✒" onClick="{{ it.onBreak }}" hint-size="auto,32px">破封</x-import>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ it.opened }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;justify-content:center;padding:2px 0">
+                        <x-import component-from-global-scope="MitlesenDesignSystem_737635.RitualCard" art="{{ it.art }}" size="compact" kicker="{{ it.kicker }}" title="{{ it.title }}" subtitle="{{ it.subtitle }}" quote="{{ it.quote }}" note="{{ it.note }}" footer="{{ it.footer }}" hint-size="244px,360px"></x-import>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;border-top:1px solid var(--border);background:var(--surface);flex:none">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 12px;color:var(--text-dim)"><span style="font-size:17px">❏</span><span style="font-size:10.5px">书架</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 12px;color:var(--accent-deep)"><span style="font-size:17px">✉</span><span style="font-size:10.5px;font-weight:600">信箱</span><x-import component-from-global-scope="MitlesenDesignSystem_737635.WaxDot" tone="accent" size="{{ dotSize }}" hint-size="12px,12px"></x-import></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 12px;color:var(--text-dim)"><span style="font-size:17px">✦</span><span style="font-size:10.5px">我</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:288px;flex:none;display:flex;flex-direction:column;gap:12px;padding-top:26px">
+          <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+            <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">① 火漆即卡面</span>
+            <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">未拆=火漆(idle 呼吸),破封→显 RitualCard(服务端 <code style="font-size:12px">image.svg</code> 直出卡面)。全部复用现成 <code style="font-size:12px">card-inbox</code> / <code style="font-size:12px">dismiss</code>,后端零改动。</p>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+            <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">② 统计并入「我」</span>
+            <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">第二 tab 让位给信箱,山脉/日历移进「我」——统计本就在「我」里重复了一份。</p>
+          </div>
+          <div style="border:1px dashed var(--border-hover);border-radius:16px;background:transparent;padding:14px 16px">
+            <span class="cap" style="margin-bottom:6px">③ v2 · 跨服务(后置)</span>
+            <p style="margin:0;font-size:13px;line-height:1.55;color:var(--text-dim);text-wrap:pretty">接 Nachklang Vorklang 慢递后,同一壳里多一层「小奏寄来的信」,破火漆读双声部。不阻塞 v1。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 2b · 纸不随主题反色 ===== -->
+    <div id="2b" style="position:relative;width:560px;padding-top:34px">
+      <div style="position:absolute;top:0;left:0;font-family:var(--font-sans);font-size:12px;letter-spacing:1px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:3px 11px">2b · 纸不随主题反色</div>
+      <span class="cap" style="color:var(--accent-deep)">换纸 ≠ 暗色模式</span>
+      <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:var(--text-mid);text-wrap:pretty;max-width:480px">纸由「选纸」驱动(warm / snow / night),主题只翻 chrome。同一张纸在冷界、暗界下——<strong style="color:var(--text)">纸色不变</strong>。</p>
+
+      <div style="display:grid;grid-template-columns:58px 172px 172px;gap:14px;align-items:center">
+        <span></span>
+        <span class="cap" style="text-align:center;margin:0">界 · light</span>
+        <span class="cap" style="text-align:center;margin:0">界 · dark</span>
+
+        <div style="font-family:var(--font-serif);font-size:16px;color:var(--text)">暖<div style="font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);font-family:var(--font-sans)">WARM</div></div>
+        <div style="background:#F0F3FA;border:1px solid rgba(160,170,200,0.18);border-radius:12px;padding:12px">
+          <div style="border-radius:3px;padding:11px 12px;box-shadow:0 6px 18px -8px rgba(45,49,66,.28);background:linear-gradient(180deg,#FBF8F1,#F3EEE2)"><div style="font-family:var(--font-serif);font-size:14px;font-weight:600;color:#4A4438">共读</div><div style="margin-top:5px;font-family:Georgia,'Songti SC',serif;font-size:10.5px;line-height:17px;color:#4A4438;background:repeating-linear-gradient(to bottom,transparent 0,transparent 16px,#E7DFC9 16px,#E7DFC9 17px)">纸是<span style="background:linear-gradient(transparent 58%,rgba(201,168,106,.42) 58%)">物件</span>,不随界反色。</div></div>
+        </div>
+        <div style="background:#1C1E2E;border:1px solid rgba(100,110,150,0.2);border-radius:12px;padding:12px">
+          <div style="border-radius:3px;padding:11px 12px;box-shadow:0 6px 18px -8px rgba(0,0,0,.4);background:linear-gradient(180deg,#FBF8F1,#F3EEE2)"><div style="font-family:var(--font-serif);font-size:14px;font-weight:600;color:#4A4438">共读</div><div style="margin-top:5px;font-family:Georgia,'Songti SC',serif;font-size:10.5px;line-height:17px;color:#4A4438;background:repeating-linear-gradient(to bottom,transparent 0,transparent 16px,#E7DFC9 16px,#E7DFC9 17px)">暗界里,暖纸<span style="background:linear-gradient(transparent 58%,rgba(201,168,106,.42) 58%)">仍暖</span>。</div></div>
+        </div>
+
+        <div style="font-family:var(--font-serif);font-size:16px;color:var(--text)">雪<div style="font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);font-family:var(--font-sans)">SNOW</div></div>
+        <div style="background:#F0F3FA;border:1px solid rgba(160,170,200,0.18);border-radius:12px;padding:12px">
+          <div style="border-radius:3px;padding:11px 12px;box-shadow:0 6px 18px -8px rgba(45,49,66,.28);background:linear-gradient(180deg,#F7F9FC,#EEF2F8)"><div style="font-family:var(--font-serif);font-size:14px;font-weight:600;color:#3A4453">共读</div><div style="margin-top:5px;font-family:Georgia,'Songti SC',serif;font-size:10.5px;line-height:17px;color:#3A4453;background:repeating-linear-gradient(to bottom,transparent 0,transparent 16px,#DBE4EE 16px,#DBE4EE 17px)">雪纸偏冷,<span style="background:linear-gradient(transparent 58%,rgba(156,200,220,.5) 58%)">仍是纸</span>。</div></div>
+        </div>
+        <div style="background:#1C1E2E;border:1px solid rgba(100,110,150,0.2);border-radius:12px;padding:12px">
+          <div style="border-radius:3px;padding:11px 12px;box-shadow:0 6px 18px -8px rgba(0,0,0,.4);background:linear-gradient(180deg,#F7F9FC,#EEF2F8)"><div style="font-family:var(--font-serif);font-size:14px;font-weight:600;color:#3A4453">共读</div><div style="margin-top:5px;font-family:Georgia,'Songti SC',serif;font-size:10.5px;line-height:17px;color:#3A4453;background:repeating-linear-gradient(to bottom,transparent 0,transparent 16px,#DBE4EE 16px,#DBE4EE 17px)">界暗,雪纸<span style="background:linear-gradient(transparent 58%,rgba(156,200,220,.5) 58%)">不变</span>。</div></div>
+        </div>
+
+        <div style="font-family:var(--font-serif);font-size:16px;color:var(--text)">夜<div style="font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);font-family:var(--font-sans)">NIGHT</div></div>
+        <div style="background:#F0F3FA;border:1px solid rgba(160,170,200,0.18);border-radius:12px;padding:12px">
+          <div style="border-radius:3px;padding:11px 12px;box-shadow:0 6px 18px -8px rgba(45,49,66,.28);background:linear-gradient(180deg,#23212C,#1D1B25)"><div style="font-family:var(--font-serif);font-size:14px;font-weight:600;color:#E6E1D6">共读</div><div style="margin-top:5px;font-family:Georgia,'Songti SC',serif;font-size:10.5px;line-height:17px;color:#E6E1D6;background:repeating-linear-gradient(to bottom,transparent 0,transparent 16px,#37333F 16px,#37333F 17px)">夜纸是<span style="background:linear-gradient(transparent 58%,rgba(201,168,106,.42) 58%)">选出来的</span>纸。</div></div>
+        </div>
+        <div style="background:#1C1E2E;border:1px solid rgba(100,110,150,0.2);border-radius:12px;padding:12px">
+          <div style="border-radius:3px;padding:11px 12px;box-shadow:0 6px 18px -8px rgba(0,0,0,.4);background:linear-gradient(180deg,#23212C,#1D1B25)"><div style="font-family:var(--font-serif);font-size:14px;font-weight:600;color:#E6E1D6">共读</div><div style="margin-top:5px;font-family:Georgia,'Songti SC',serif;font-size:10.5px;line-height:17px;color:#E6E1D6;background:repeating-linear-gradient(to bottom,transparent 0,transparent 16px,#37333F 16px,#37333F 17px)">非暗色对纸<span style="background:linear-gradient(transparent 58%,rgba(201,168,106,.42) 58%)">反色</span>。</div></div>
+        </div>
+      </div>
+
+      <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:var(--text-dim);text-wrap:pretty;max-width:480px">夜纸 <code style="font-size:12px">#23212C</code> 是一张<strong style="color:var(--text-mid)">选出来的纸</strong>,不是暗色模式把暖纸翻黑。token 层拆开后,readme 第 4 公理与 colors.css 不再打架:</p>
+
+      <pre style="margin:14px 0 0;font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.75;color:var(--text-mid);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow:auto;white-space:pre"><span style="color:var(--text-faint)">/* colors.css · 纸自成一套,由 [data-paper] 驱动,与主题无关 */</span>
+<span style="color:var(--accent-deep)">[data-paper="warm"]</span> { --vk-paper:#FBF8F1; --vk-ink:#4A4438; --vk-rule:#E7DFC9 }
+<span style="color:var(--accent-deep)">[data-paper="snow"]</span> { --vk-paper:#F7F9FC; --vk-ink:#3A4453; --vk-rule:#DBE4EE }
+<span style="color:var(--accent-deep)">[data-paper="night"]</span>{ --vk-paper:#23212C; --vk-ink:#E6E1D6; --vk-rule:#37333F }
+
+[data-theme="dark"] {   <span style="color:var(--text-faint)">/* 只翻 chrome,不碰纸 */</span>
+<span style="color:var(--rose)">-   --vk-paper:#2C2E40;  --vk-ink:#D8D5E4;  --vk-rule:#3A3D52;   ← 删</span>
+}</pre>
+    </div>
+
+  </div>
+</section>
+
+<section id="1a" style="position:relative;padding:46px 52px 64px;min-width:1420px">
+  <div style="position:absolute;top:20px;left:52px;font-family:var(--font-sans);font-size:12px;letter-spacing:1px;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:3px 11px">1a</div>
+
+  <header style="max-width:960px;margin:8px 0 30px">
+    <div class="cap" style="color:var(--accent-deep)">施工侧反馈 §三 · 设计裁决</div>
+    <h1 style="font-family:var(--font-serif);font-weight:600;font-size:34px;line-height:1.15;margin:0 0 10px;color:var(--text)">长目录的退化 · 当一本书有 48 章</h1>
+    <p style="margin:0;font-size:15px;line-height:1.65;color:var(--text-mid);text-wrap:pretty;max-width:760px">线上真书 48 章,现状把整份目录平铺进侧栏唯一的滚动流——第二本书被顶到看不见。退化规范:<strong style="color:var(--text)">书架与目录各成有界滚动区</strong>,<strong style="color:var(--text)">当前章开窗</strong>(只常驻当前 ±N,其余折进虚线展开条),手机 sheet <strong style="color:var(--text)">限高按十章分组</strong>。下方为可交互演示,用真实 DS 组件(BookCard / ChapterRow / WaxDot)。</p>
+  </header>
+
+  <div style="display:flex;gap:30px;align-items:flex-start">
+
+    <!-- ===== 现状 · 问题 ===== -->
+    <div style="width:250px;flex:none">
+      <span class="cap" style="color:var(--rose)">现状 · 问题</span>
+      <div style="height:392px;border:1px solid var(--border-hover);border-radius:16px;overflow:hidden;background:var(--grad-rail);box-shadow:var(--shadow-lg);position:relative">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px 9px">
+          <div><span style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint)">书架</span><div style="font-family:var(--font-serif);font-size:16px;font-weight:600;color:var(--text)">Bibliothek</div></div>
+          <span style="color:var(--text-faint);font-size:15px">＋ ↻</span>
+        </div>
+        <div style="padding:0 10px;display:flex;flex-direction:column;gap:7px">
+          <x-import component-from-global-scope="MitlesenDesignSystem_737635.BookCard" title="{{ beforeBook.title }}" author="{{ beforeBook.author }}" read="{{ beforeBook.read }}" total="{{ beforeBook.total }}" annotation-count="{{ beforeBook.ann }}" active="{{ true }}" hint-size="100%,84px"></x-import>
+          <div style="display:flex;flex-direction:column;gap:2px;padding-left:6px;border-left:1px dashed var(--border-hover);margin-left:2px">
+            <sc-for list="{{ beforeRows }}" as="r" hint-placeholder-count="6">
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.ChapterRow" title="{{ r.title }}" read="{{ r.read }}" current="{{ r.current }}" annotation-count="{{ r.ann }}" hint-size="100%,32px"></x-import>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(180deg,transparent,var(--bg2) 62%);pointer-events:none"></div>
+        <div style="position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:8px;font-family:var(--font-sans);font-size:12px;color:var(--rose);background:var(--rose-soft);border:1px solid var(--rose);border-radius:10px;padding:8px 10px">
+          <span style="font-size:14px">↓</span><span style="text-wrap:pretty">《夜间飞行》在 40 行之下 · 单一滚动流</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 退化后 · 桌面侧栏 ===== -->
+    <div style="width:342px;flex:none">
+      <span class="cap" style="color:var(--accent-deep)">退化后 · 桌面侧栏 312px</span>
+      <div style="border:1px solid var(--border-hover);border-radius:18px;overflow:hidden;background:var(--surface-solid);box-shadow:var(--shadow-lg)">
+        <div style="height:46px;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--border);background:var(--surface)">
+          <x-import component-from-global-scope="MitlesenDesignSystem_737635.IconButton" label="书架" hint-size="34px,34px">☰</x-import>
+          <div style="font-family:var(--font-serif);font-weight:600;font-size:18px;letter-spacing:.5px">共读<span style="font-family:var(--font-sans);font-size:9px;letter-spacing:2px;color:var(--text-faint);margin-left:6px">MITLESEN</span></div>
+          <div style="flex:1"></div>
+          <x-import component-from-global-scope="MitlesenDesignSystem_737635.IconButton" label="明暗" hint-size="34px,34px">◐</x-import>
+        </div>
+
+        <div style="height:600px;display:flex;flex-direction:column;background:var(--grad-rail)">
+          <!-- rail head (fixed) -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 12px 8px;flex:none">
+            <div>
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.Eyebrow" hint-size="auto,14px">书架</x-import>
+              <div style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:var(--text)">Bibliothek</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.IconButton" label="导入" hint-size="34px,34px">＋</x-import>
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.IconButton" label="刷新" hint-size="34px,34px">↻</x-import>
+            </div>
+          </div>
+
+          <!-- shelf region (own scroll, bounded) -->
+          <div style="flex:0 1 auto;max-height:196px;overflow-y:auto;padding:0 10px 8px;display:flex;flex-direction:column;gap:8px;min-height:0">
+            <sc-for list="{{ shelf }}" as="b" hint-placeholder-count="3">
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.BookCard" title="{{ b.title }}" author="{{ b.author }}" read="{{ b.read }}" total="{{ b.total }}" annotation-count="{{ b.ann }}" active="{{ b.active }}" onClick="{{ b.onClick }}" hint-size="100%,84px"></x-import>
+            </sc-for>
+          </div>
+
+          <div style="height:1px;background:var(--border);margin:2px 12px 0;flex:none"></div>
+
+          <!-- toc head (fixed) -->
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px 8px;flex:none">
+            <div style="display:flex;align-items:baseline;gap:8px;min-width:0">
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.Eyebrow" hint-size="auto,14px">目录</x-import>
+              <span style="font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dTitle }} · {{ dCount }} 章</span>
+            </div>
+            <sc-if value="{{ showBackDesk }}" hint-placeholder-val="{{ false }}">
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.Button" size="sm" icon="↻" onClick="{{ onBackDesk }}" hint-size="auto,30px">回到在读</x-import>
+            </sc-if>
+          </div>
+
+          <!-- toc region (own scroll, windowed) -->
+          <div ref="{{ deskRegionRef }}" onScroll="{{ onDeskScroll }}" style="flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 10px 12px;display:flex;flex-direction:column;gap:2px">
+            <sc-if value="{{ showBefore }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ onExpandBefore }}" style="display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:7px 9px;border:1px dashed var(--border-hover);background:transparent;border-radius:8px;cursor:pointer;color:var(--text-dim);font-family:var(--font-sans);font-size:var(--text-xs);transition:var(--dur-fast)" style-hover="border-color:var(--accent);color:var(--accent-deep)">
+                <span style="width:9px;height:9px;border-radius:50%;flex:none;background:var(--vk-ice-soft);border:1.5px solid var(--vk-ice)"></span>
+                <span style="flex:1">展开上文 · {{ beforeLabel }}</span>
+                <span style="color:var(--vk-ice);font-size:14px">‹</span>
+              </button>
+            </sc-if>
+
+            <sc-for list="{{ dRows }}" as="ch" hint-placeholder-count="9">
+              <x-import component-from-global-scope="MitlesenDesignSystem_737635.ChapterRow" title="{{ ch.title }}" read="{{ ch.read }}" current="{{ ch.current }}" annotation-count="{{ ch.ann }}" data-current="{{ ch.dcur }}" onClick="{{ ch.onClick }}" hint-size="100%,34px"></x-import>
+            </sc-for>
+
+            <sc-if value="{{ showAfter }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ onExpandAfter }}" style="display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:7px 9px;border:1px dashed var(--border-hover);background:transparent;border-radius:8px;cursor:pointer;color:var(--text-dim);font-family:var(--font-sans);font-size:var(--text-xs);transition:var(--dur-fast)" style-hover="border-color:var(--accent);color:var(--accent-deep)">
+                <span style="width:9px;height:9px;border-radius:50%;flex:none;background:var(--vk-ice-soft);border:1.5px solid var(--vk-ice)"></span>
+                <span style="flex:1">展开下文 · {{ afterLabel }}</span>
+                <span style="color:var(--vk-ice);font-size:14px">›</span>
+              </button>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 手机 · 目录 sheet ===== -->
+    <div style="width:318px;flex:none">
+      <span class="cap" style="color:var(--accent-deep)">手机 · 目录 sheet</span>
+      <div style="background:#14161f;padding:9px;border-radius:44px;box-shadow:var(--shadow-lg),0 30px 60px -20px rgba(20,22,38,.5)">
+        <div style="position:relative;height:616px;border-radius:34px;overflow:hidden;background:var(--bg)">
+          <div style="position:absolute;inset:0;background:var(--grad-paper);opacity:.5;padding:56px 26px 0">
+            <div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--vk-ink)">{{ mTitle }}</div>
+            <div style="font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--vk-ink-dim);margin-top:3px">第 24 章 · 和解</div>
+            <div style="margin-top:20px;height:220px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,var(--vk-rule) 27px,var(--vk-rule) 28px)"></div>
+          </div>
+          <div style="position:absolute;inset:0;background:rgba(20,22,38,.34)"></div>
+
+          <div style="position:absolute;left:0;right:0;bottom:0;max-height:80%;display:flex;flex-direction:column;background:var(--surface-solid);border-radius:20px 20px 0 0;box-shadow:var(--shadow-sheet-modal);padding:12px 14px 16px;animation:sheetIn var(--dur) var(--ease-out)">
+            <div style="width:36px;height:4px;border-radius:999px;background:var(--border-hover);margin:0 auto 10px;flex:none"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none;margin-bottom:8px">
+              <h3 style="margin:0;font-family:var(--font-serif);font-size:17px;font-weight:600;color:var(--text)">目录 · {{ mTitle }}</h3>
+              <sc-if value="{{ showBackMob }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="MitlesenDesignSystem_737635.Button" size="sm" icon="↻" onClick="{{ onBackMob }}" hint-size="auto,30px">回到在读</x-import>
+              </sc-if>
+            </div>
+
+            <div ref="{{ sheetRegionRef }}" onScroll="{{ onSheetScroll }}" style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px">
+              <sc-for list="{{ mGroups }}" as="g" hint-placeholder-count="5">
+                <div>
+                  <button onClick="{{ g.onToggle }}" style="{{ g.headStyle }}" style-hover="border-color:var(--border-hover)">
+                    <x-import component-from-global-scope="MitlesenDesignSystem_737635.WaxDot" tone="{{ g.dotTone }}" hollow="{{ g.hollow }}" size="{{ dotSize }}" hint-size="12px,12px"></x-import>
+                    <span style="flex:1;font-size:14px;font-weight:500">{{ g.label }}</span>
+                    <span style="font-size:11px;color:var(--text-dim)">{{ g.sub }}</span>
+                    <span style="color:var(--text-dim);font-size:12px;width:12px;text-align:center">{{ g.chev }}</span>
+                  </button>
+                  <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;flex-direction:column;gap:2px;padding-left:8px;border-left:1px dashed var(--border-hover);margin:4px 0 4px 8px">
+                      <sc-for list="{{ g.rows }}" as="ch" hint-placeholder-count="10">
+                        <x-import component-from-global-scope="MitlesenDesignSystem_737635.ChapterRow" title="{{ ch.title }}" read="{{ ch.read }}" current="{{ ch.current }}" annotation-count="{{ ch.ann }}" data-current="{{ ch.dcur }}" onClick="{{ ch.onClick }}" hint-size="100%,34px"></x-import>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== callouts ===== -->
+    <div style="width:296px;flex:none;display:flex;flex-direction:column;gap:12px">
+      <span class="cap">退化机制 · 四则</span>
+      <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+        <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">① 书架 / 目录分区</span>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">书架自成有界滚动区(限高 + 内滚),永远够得到第二、三本书;目录在下方独立滚动,再长也不会把书架顶走。</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+        <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">② 当前章开窗</span>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">只常驻「当前 ±N 章」,其余折进「展开上文 / 下文」虚线条。折叠条走冰蓝(第 4 公理:结构与留白的第二声),不与主强调争位。</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+        <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">③ 回到在读</span>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">当前章滚出视野时,目录头浮现「回到在读」——一键收拢展开、居中当前章。展开后向上滚一下即可见。</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-sm);padding:14px 16px">
+        <span class="cap" style="margin-bottom:6px;color:var(--accent-deep)">④ 手机 · 按十章分组</span>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-mid);text-wrap:pretty">TOC sheet 限高内滚,章节按「第 N–M 章」手风琴折叠,仅当前组自动展开;组头一枚蜡点示读毕进度(金=读完,青=在读)。点组头切换。</p>
+      </div>
+      <div style="border:1px dashed var(--border-hover);border-radius:16px;background:transparent;padding:12px 16px">
+        <p style="margin:0;font-size:12px;line-height:1.55;color:var(--text-dim);text-wrap:pretty">参数可调:右侧 Tweaks 面板改「当前 ±N」与「每组章数」,即时看退化临界。</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;windowBefore&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:8,&quot;unit&quot;:&quot;章&quot;,&quot;section&quot;:&quot;退化参数&quot;},&quot;windowAfter&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:2,&quot;max&quot;:16,&quot;unit&quot;:&quot;章&quot;,&quot;section&quot;:&quot;退化参数&quot;},&quot;groupSize&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:10,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:5,&quot;max&quot;:20,&quot;unit&quot;:&quot;章/组&quot;,&quot;section&quot;:&quot;退化参数&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    const POOL=["雪夜来客","未寄的信","河边的争执","法庭之前","梦里的母亲","面包与石头","旧宅的钟声","一场忏悔","远行的念头","窗下","一句玩笑","黑修士","孩子们","离别","归来","低语","裂痕","抉择","此处有回声","灰烬","晨祷","陌生人","旧账","和解","远雷","无名的脚步","门后的人","雪已停"];
+    const mk=(id,title,author,n,cur,ann)=>{
+      const chunks=[];
+      for(let i=0;i<n;i++) chunks.push({id:id+"-"+i,num:i+1,title:"第 "+(i+1)+" 章 · "+POOL[i%POOL.length],read:i<cur,ann:ann.indexOf(i+1)>=0?1+(i%2):0});
+      return {id,title,author,chunks};
+    };
+    this.books=[
+      mk("kara","卡拉马佐夫兄弟","陀思妥耶夫斯基",48,23,[4,13,24,32]),
+      mk("nacht","夜间飞行","圣埃克苏佩里",9,4,[3,6]),
+      mk("sterne","人类群星闪耀时","茨威格",14,14,[8]),
+    ];
+    this.inbox=[
+      {id:"k1",art:"fold",kicker:"两个人的折痕",title:"卡拉马佐夫兄弟",subtitle:"陀思妥耶夫斯基 · 第 24 章",quote:"「在雪夜里,谁也没有先开口。」",note:"此处有回声。",footer:"FOLDED MARGIN"},
+      {id:"k2",art:"ripple",kicker:"收获了一枚回声书签",title:"夜间飞行",subtitle:"圣埃克苏佩里 · 第 5 章",quote:"「夜里,他把航线交给了星星。」",note:"小奏:这一句我也停了很久。",footer:"ECHO BOOKMARK"},
+      {id:"k3",art:"stardust",kicker:"一枚尘迹",title:"人类群星闪耀时",subtitle:"茨威格 · 第 12 章",quote:"「有些瞬间,一生只来一次。」",note:"",footer:"DUST TRACE"},
+    ];
+    this.PAPER={
+      warm:{paper:"#FBF8F1",paper2:"#F3EEE2",ink:"#4A4438",inkDim:"#8A8270",rule:"#E7DFC9",zh:"暖",en:"WARM"},
+      snow:{paper:"#F7F9FC",paper2:"#EEF2F8",ink:"#3A4453",inkDim:"#6B7889",rule:"#DBE4EE",zh:"雪",en:"SNOW"},
+      night:{paper:"#23212C",paper2:"#1D1B25",ink:"#E6E1D6",inkDim:"#9A9384",rule:"#37333F",zh:"夜",en:"NIGHT"},
+    };
+    this.deskRegionRef=React.createRef();
+    this.sheetRegionRef=React.createRef();
+    this.state={activeId:"kara",curById:{kara:23,nacht:4,sterne:13},expB:false,expA:false,openGroup:null,showBackDesk:false,showBackMob:false,opened:{k3:true},paperSel:"warm",pickerOpen:true};
+    this.onDeskScroll=this.onDeskScroll.bind(this);
+    this.onSheetScroll=this.onSheetScroll.bind(this);
+  }
+  get active(){return this.books.find(b=>b.id===this.state.activeId);}
+  cur(){return this.state.curById[this.state.activeId];}
+  gs(){return this.props.groupSize==null?10:this.props.groupSize;}
+  selectBook(id){this.setState({activeId:id,expB:false,expA:false,openGroup:null,showBackDesk:false,showBackMob:false});}
+  gotoChunk(i){this.setState(s=>({curById:{...s.curById,[s.activeId]:i},expB:false,expA:false,openGroup:null,showBackDesk:false,showBackMob:false}));}
+  toggleGroup(g){const gs=this.gs();this.setState(s=>{const cur=s.curById[s.activeId];const res=s.openGroup==null?Math.floor(cur/gs):s.openGroup;return {openGroup:res===g?-1:g};});}
+  visible(row,r){const rr=r.getBoundingClientRect(),br=row.getBoundingClientRect();return br.bottom>rr.top+6 && br.top<rr.bottom-6;}
+  onDeskScroll(){const r=this.deskRegionRef.current;if(!r)return;const row=r.querySelector("[data-current]");const off=row?!this.visible(row,r):false;if(off!==this.state.showBackDesk)this.setState({showBackDesk:off});}
+  onSheetScroll(){const r=this.sheetRegionRef.current;if(!r)return;const row=r.querySelector("[data-current]");const off=row?!this.visible(row,r):false;if(off!==this.state.showBackMob)this.setState({showBackMob:off});}
+  center(r){if(!r)return;const row=r.querySelector("[data-current]");if(!row)return;const rr=r.getBoundingClientRect(),br=row.getBoundingClientRect();r.scrollTop+=(br.top-rr.top)-(r.clientHeight/2-br.height/2);}
+  backDesk(){this.setState({expB:false,expA:false,showBackDesk:false});requestAnimationFrame(()=>this.center(this.deskRegionRef.current));}
+  backMob(){this.setState({openGroup:null,showBackMob:false});requestAnimationFrame(()=>this.center(this.sheetRegionRef.current));}
+  breakSeal(id){this.setState(s=>({opened:Object.assign({},s.opened,{[id]:true})}));}
+  setPaper(k){this.setState({paperSel:k});}
+  togglePicker(){this.setState(s=>({pickerOpen:!s.pickerOpen}));}
+  paperOptStyle(active){const b={display:"flex",alignItems:"center",gap:"11px",width:"100%",textAlign:"left",padding:"9px 11px",borderRadius:"12px",cursor:"pointer",border:"1px solid var(--border)",background:"var(--surface)",transition:"var(--dur-fast)"};return active?Object.assign({},b,{border:"1px solid var(--accent-med)",background:"var(--accent-soft)"}):b;}
+  row(ch,idx,cur){return {key:ch.id,title:ch.title,read:ch.read,current:idx===cur,ann:ch.ann,dcur:idx===cur?"1":null,onClick:()=>this.gotoChunk(idx)};}
+  groupHead(cur,open){const base={display:"flex",alignItems:"center",gap:"10px",width:"100%",textAlign:"left",padding:"11px 12px",borderRadius:"12px",cursor:"pointer",border:"1px solid var(--border)",background:"var(--surface)",fontFamily:"var(--font-sans)",color:"var(--text)",transition:"var(--dur-fast)"};return cur?Object.assign({},base,{border:"1px solid var(--accent-med)",background:"var(--accent-soft)"}):base;}
+  renderVals(){
+    const b=this.active,chunks=b.chunks,cur=this.cur();
+    const WB=this.props.windowBefore==null?2:this.props.windowBefore;
+    const WA=this.props.windowAfter==null?6:this.props.windowAfter;
+    const gs=this.gs();
+    const lo=this.state.expB?0:Math.max(0,cur-WB);
+    const hi=this.state.expA?chunks.length:Math.min(chunks.length,cur+WA+1);
+    const dRows=chunks.slice(lo,hi).map((ch,i)=>this.row(ch,lo+i,cur));
+    const beforeCount=lo,afterCount=chunks.length-hi;
+    const shelf=this.books.map(x=>{const rc=x.chunks.filter(c=>c.read).length;return {key:x.id,title:x.title,author:x.author,read:rc,total:x.chunks.length,ann:x.chunks.reduce((n,c)=>n+(c.ann?1:0),0),active:x.id===this.state.activeId,onClick:()=>this.selectBook(x.id)};});
+    const bb=this.books[0];
+    const beforeRows=bb.chunks.slice(0,7).map((ch,i)=>({key:"bf"+ch.id,title:ch.title,read:ch.read,current:i===0,ann:ch.ann}));
+    const res=this.state.openGroup==null?Math.floor(cur/gs):this.state.openGroup;
+    const groups=[];
+    for(let g=0;g*gs<chunks.length;g++){
+      const s=g*gs,e=Math.min(chunks.length,s+gs),slice=chunks.slice(s,e);
+      const rc=slice.filter(c=>c.read).length,isCur=cur>=s&&cur<e,open=res===g;
+      groups.push({key:"g"+g,label:"第 "+(s+1)+"–"+e+" 章",sub:rc+"/"+slice.length,open,current:isCur,chev:open?"▾":"▸",dotTone:rc===slice.length?"gold":isCur?"accent":rc>0?"mint":"accent",hollow:rc===0&&!isCur,headStyle:this.groupHead(isCur,open),onToggle:()=>this.toggleGroup(g),rows:open?slice.map((ch,i)=>this.row(ch,s+i,cur)):[]});
+    }
+    const inbox=this.inbox.map(it=>Object.assign({},it,{key:it.id,opened:!!this.state.opened[it.id],sealed:!this.state.opened[it.id],onBreak:()=>this.breakSeal(it.id)}));
+    const p=this.PAPER[this.state.paperSel];
+    const paperSheetStyle={background:"linear-gradient(180deg,"+p.paper+","+p.paper2+")",borderRadius:"3px",padding:"18px 20px",boxShadow:"0 8px 26px -10px rgba(45,49,66,.3), 0 1px 0 rgba(255,255,255,.4) inset",minHeight:"180px"};
+    const paperTitleStyle={color:p.ink};
+    const paperTextStyle={color:p.ink,fontFamily:"Georgia,'Songti SC',serif",fontSize:"12.5px",lineHeight:"26px",marginTop:"10px",backgroundPosition:"0 6px",background:"repeating-linear-gradient(to bottom,transparent 0,transparent 25px,"+p.rule+" 25px,"+p.rule+" 26px)"};
+    const paperCapStyle={color:p.inkDim};
+    const paperOpts=Object.keys(this.PAPER).map(k=>{const q=this.PAPER[k];const active=k===this.state.paperSel;return {key:k,zh:q.zh,en:q.en,active,onPick:()=>this.setPaper(k),swStyle:{width:"26px",height:"26px",borderRadius:"8px",flex:"none",boxShadow:"inset 0 0 0 1px rgba(45,49,66,.12)",background:"linear-gradient(135deg,"+q.paper+","+q.paper2+")"},style:this.paperOptStyle(active)};});
+    return {
+      shelf,inbox,
+      paperSheetStyle,paperTitleStyle,paperTextStyle,paperCapStyle,paperOpts,
+      pickerOpen:this.state.pickerOpen,onTogglePicker:()=>this.togglePicker(),
+      curSwStyle:{width:"20px",height:"20px",borderRadius:"6px",flex:"none",boxShadow:"inset 0 0 0 1px rgba(45,49,66,.12)",background:"linear-gradient(135deg,"+p.paper+","+p.paper2+")"},curPaperZh:p.zh,
+      beforeBook:{title:bb.title,author:bb.author,read:bb.chunks.filter(c=>c.read).length,total:bb.chunks.length,ann:bb.chunks.reduce((n,c)=>n+(c.ann?1:0),0)},
+      beforeRows,
+      dTitle:b.title,dCount:chunks.length,dRows,dotSize:12,
+      showBefore:beforeCount>0,beforeLabel:beforeCount+" 章",onExpandBefore:()=>this.setState({expB:true,showBackDesk:true}),
+      showAfter:afterCount>0,afterLabel:afterCount+" 章",onExpandAfter:()=>this.setState({expA:true}),
+      showBackDesk:this.state.showBackDesk,onBackDesk:()=>this.backDesk(),
+      deskRegionRef:this.deskRegionRef,onDeskScroll:this.onDeskScroll,
+      mTitle:b.title,mGroups:groups,
+      showBackMob:this.state.showBackMob,onBackMob:()=>this.backMob(),
+      sheetRegionRef:this.sheetRegionRef,onSheetScroll:this.onSheetScroll,
+    };
+  }
+}
+</script>
+</body>
+</html>

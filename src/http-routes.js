@@ -39,6 +39,13 @@ const contentTypes = {
 };
 
 export function sendJson(res, status, value) {
+  // 审计 0719 🔴：任何「已写响应头之后才抛出」的处理器，都会让顶层 catch 在这里二次 writeHead
+  // → ERR_HTTP_HEADERS_SENT 在 catch 回调内同步抛出 → unhandled rejection → Node ≥15 直接杀进程。
+  // 守住这一处，整类「写头后失败」就退化成断连而非宕机。
+  if (res.headersSent) {
+    res.destroy();
+    return;
+  }
   res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
   res.end(JSON.stringify(value, null, 2));
 }
@@ -154,15 +161,30 @@ export async function handleApi(req, res, url, options = {}) {
 
   if (req.method === "GET" && parts.length === 4 && parts[1] === "cards" && parts[3] === "image.svg") {
     const card = await readCard(parts[2]);
+    const svg = renderCardSvg(card);        // 先渲染后写头：渲染失败要能走正常错误响应
     res.writeHead(200, { "content-type": "image/svg+xml; charset=utf-8" });
-    res.end(renderCardSvg(card));
+    res.end(svg);
     return;
   }
 
   if (req.method === "GET" && parts.length === 4 && parts[1] === "cards" && parts[3] === "image.png") {
     const card = await readCard(parts[2]);
+    // 先渲染后写头。本机没装 Playwright（renderCardPng 第一行就 throw），此前是「头已发出再抛」
+    // → 顶层 catch 二次 writeHead → 进程被杀。缺 Playwright 时回退 SVG，而不是让请求打死服务。
+    let png;
+    try {
+      png = renderCardPng(card);
+    } catch (error) {
+      const svg = renderCardSvg(card);
+      res.writeHead(200, {
+        "content-type": "image/svg+xml; charset=utf-8",
+        "x-card-fallback": "svg",   // 告诉调用方这不是 PNG：没装 Playwright
+      });
+      res.end(svg);
+      return;
+    }
     res.writeHead(200, { "content-type": "image/png" });
-    res.end(renderCardPng(card));
+    res.end(png);
     return;
   }
 

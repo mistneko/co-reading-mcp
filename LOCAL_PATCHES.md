@@ -32,3 +32,10 @@
 - `public/reader.html`：head 加 manifest/图标/theme-color/apple-* meta + SW 注册（`sw.js?v=mitlesen-v1`）。**改前端记得双 bump**（sw.js 的 CACHE + reader.html 的 ?v=）。
 - `src/http-routes.js`：`contentTypes` 补 `.png`。
 - `src/server-sse.js`：①公开资产免鉴权白名单（manifest.json/sw.js/icon-*/apple-touch-icon/favicon——浏览器拉 manifest、iOS 拉 touch-icon 默认不带 cookie，锁着装不上）；②未授权浏览器 GET 阅读路径改出内联「输入暗号」页（替代裸 401 JSON）——iOS 主屏 PWA cookie 容器独立，首启在页内输入 token 走 `/?token=` 302+种 cookie 流。**token 不进 manifest**（安全评估结论）。
+
+## 6. `public/reader.html` — 设计系统桌面批（2026-07）
+- 补齐设计系统 token 别名，并修正暗色纸上的冰色对比；既有声明保持不动。
+- 「读完这章」后读取当前书的卡片信箱，以服务端 `image.svg` 为唯一卡面真源，逐张展示玻璃仪式浮层并在「收下」时 dismiss；无卡或拉取失败仍沿用原 toast。
+- 无批注时显示邀请式空状态；选区「批注」按钮改用设计系统小尺寸；`public/sw.js` 与 reader 注册串同步 bump 到 `mitlesen-v2`。
+- **为什么**：补上桌面设计系统唯一缺失的「一页一仪式」，并收齐两项小件，不改变既有桌面几何、色板与信纸物性。
+- **re-clone 后重放**：把 `reader.html` 中所有 `BEAUTIFY-2026-07 · 设计系统桌面批` 标记块按原位置放回，同步恢复 `sw.js` 的 `mitlesen-v2`（或继续递增）及 reader 注册版本串。

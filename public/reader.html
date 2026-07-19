@@ -14,7 +14,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Mitlesen">
-<script>if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=mitlesen-v1").catch(()=>{}));</script>
+<script>
+// ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ====
+if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=mitlesen-v2").catch(()=>{}));
+// ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ====
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -31,6 +35,24 @@
   --shadow-sm:0 1px 4px rgba(45,49,66,0.04); --shadow:0 2px 12px rgba(45,49,66,0.05); --shadow-lg:0 4px 24px rgba(45,49,66,0.07);
   --radius:16px; --radius-sm:10px; --radius-xs:6px; --card-pad:18px; --card-gap:14px;
   --serif:'Cormorant Garamond','Songti SC','Noto Serif SC',serif;
+  /* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ==== */
+  --radius-lg:20px; --radius-card:34px; --radius-pill:999px; --radius-sheet:3px;
+  --blur-chrome:12px; --blur-panel:22px;
+  --mark-human:linear-gradient(transparent 58%,color-mix(in srgb,var(--vk-gold) 42%,transparent) 58%);
+  --mark-ai:linear-gradient(transparent 58%,color-mix(in srgb,var(--vk-ice) 50%,transparent) 58%);
+  --mark-active:color-mix(in srgb,var(--vk-gold) 34%,transparent);
+  --grad-accent:linear-gradient(135deg,var(--accent),var(--accent-deep));
+  --grad-rail:linear-gradient(180deg,var(--bg),var(--bg2));
+  --grad-paper:linear-gradient(180deg,var(--vk-paper),var(--vk-paper2));
+  --grad-progress:linear-gradient(90deg,var(--accent),var(--accent-deep));
+  --ease-out:cubic-bezier(.3,.8,.3,1); --dur-fast:.15s; --dur:.25s; --dur-slow:.4s;
+  --texture-dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='none'/%3E%3Ccircle cx='2' cy='2' r='.4' fill='%239098a8' opacity='.03'/%3E%3C/svg%3E");
+  --texture-rule:repeating-linear-gradient(to bottom,transparent 0,transparent 33px,var(--vk-rule) 33px,var(--vk-rule) 34px);
+  --font-reading:Georgia,'Times New Roman','Songti SC','Noto Serif SC',serif;
+  --vk-ice-soft:rgba(156,200,220,.16); --vk-env:#EFE9DC; --vk-env2:#E6DFCE;
+  --kanon-paper:#F7F9FC; --kanon-ink:#3A4453; --kanon-ink-soft:#6B7889; --kanon-rule:#DBE4EE;
+  --kanon-ice:#9FBEDC; --kanon-gold:#C9A86A; --kanon-hairline:#CBD6E2;
+  /* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ==== */
   /* —— 信纸/信封/火漆（物理纸张，不随主题翻；夜里转冷）—— */
   --vk-ice:#9CC8DC; --vk-gold:#C9A86A;
   --vk-paper:#FBF8F1; --vk-paper2:#F3EEE2; --vk-ink:#4A4438; --vk-ink-dim:#8A8270; --vk-rule:#E7DFC9;
@@ -47,6 +69,9 @@
   --shadow-sm:0 1px 4px rgba(0,0,0,.12); --shadow:0 2px 12px rgba(0,0,0,.15); --shadow-lg:0 4px 24px rgba(0,0,0,.18);
   --vk-paper:#2C2E40; --vk-paper2:#262838; --vk-ink:#D8D5E4; --vk-ink-dim:#8E92AC; --vk-rule:#3A3D52;
   --snow:#2A2D40; --snow-ink:#CFD3E4; --snow-edge:#4A5066; color-scheme:dark;
+  /* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ==== */
+  --vk-ice:#8FBED4;
+  /* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ==== */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -182,6 +207,19 @@ button{font-family:inherit;cursor:pointer}
 .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
 @keyframes sp{to{transform:rotate(360deg)}}
 
+/* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ==== */
+#selNote{font-size:11px;padding:5px 12px}
+.margins-empty{margin:auto;text-align:center;color:var(--text-dim);font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.5;padding:40px}
+.margins-empty .seal{font-size:34px;margin-bottom:12px;opacity:.5;font-style:normal}
+.card-panel{position:fixed;z-index:55;top:calc(var(--nav-h) + 16px);right:20px;width:min(380px,calc(100vw - 40px));max-height:calc(100vh - var(--nav-h) - 32px);overflow:auto;border:1px solid var(--border-hover);border-radius:24px;padding:16px;background:var(--surface);box-shadow:0 24px 80px rgba(36,31,24,.16);backdrop-filter:blur(var(--blur-panel));-webkit-backdrop-filter:blur(var(--blur-panel))}
+.card-panel-head{margin-bottom:14px}
+.card-panel .eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint)}
+.ritual-card-image{overflow:hidden;border-radius:var(--radius-card);background:var(--vk-paper);box-shadow:0 18px 54px rgba(45,49,66,.14),inset 0 0 0 1px rgba(255,255,255,.6)}
+.ritual-card-image svg{display:block;width:100%;height:auto}
+.card-actions{display:flex;justify-content:flex-end;margin-top:14px}
+@media(prefers-reduced-motion:no-preference){.card-panel{animation:ritual-card-in 280ms var(--ease-out) both}@keyframes ritual-card-in{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}}
+/* ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ==== */
+
 /* —— 手机：侧栏变抽屉 —— */
 @media(max-width:880px){
   .menu-btn{display:inline-flex}
@@ -272,6 +310,10 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ==== -->
+<div id="ritualCardRoot"></div>
+<!-- ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ==== -->
 
 <script>
 "use strict";
@@ -399,17 +441,22 @@ function renderText(){
 }
 
 /* 页边批注 */
+// ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ====
+function renderMarginsEmpty(box){
+  box.innerHTML='<div class="margins-empty"><div class="seal" aria-hidden="true">✎</div><div>选一句话，在旁边留点什么。</div></div>';
+}
 function renderMargins(){
   const roots=chunkAnns();
   const wrap=$("marginsWrap"),box=$("margins");
-  if(!roots.length && !state.anns.some(a=>a.chunkId===state.chunkId)){wrap.hidden=true;return;}
   wrap.hidden=false;
   $("marginsHead").textContent="页边批注 · "+roots.length;
   box.innerHTML="";
+  if(!roots.length){renderMarginsEmpty(box);$("submit").hidden=true;return;}
   roots.forEach(a=>box.appendChild(noteCard(a)));
   const openMine=state.anns.some(a=>a.chunkId===state.chunkId&&isHuman(a.author)&&(a.status==="open"||a.status==="draft"||a.status==="private"));
   $("submit").hidden=!openMine;
 }
+// ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ====
 function noteCard(a){
   const human=isHuman(a.author);
   const replies=state.anns.filter(x=>x.parentId===a.id).sort((x,y)=>(x.createdAt||"").localeCompare(y.createdAt||""));
@@ -480,15 +527,46 @@ async function reload(){ // 重新拉批注 + 章节计数，保持当前章
 }
 
 /* —— 进度 / 续读 / 导航 —— */
+// ==== BEAUTIFY-2026-07 · 设计系统桌面批 · start ====
+async function fetchCardSvg(id){
+  const tok=localStorage.getItem(authKey);
+  const res=await fetch(`/api/cards/${encodeURIComponent(id)}/image.svg`,{headers:tok?{authorization:"Bearer "+tok}:{}});
+  if(!res.ok)throw new Error(res.statusText);
+  return res.text();
+}
+async function showRitualCards(){
+  const root=$("ritualCardRoot");root.innerHTML="";
+  try{
+    const cards=await api(`/api/card-inbox?bookId=${encodeURIComponent(state.bookId)}&limit=10`);
+    if(!Array.isArray(cards)||!cards.length)return false;
+    const show=async index=>{
+      if(index>=cards.length){root.innerHTML="";return;}
+      const card=cards[index];
+      const svg=await fetchCardSvg(card.id);
+      const panel=document.createElement("section");
+      panel.className="card-panel";panel.setAttribute("role","dialog");panel.setAttribute("aria-label","收到一枚书签");
+      panel.innerHTML='<div class="card-panel-head"><div class="eyebrow">收到一枚书签</div></div><div class="ritual-card-image"></div><div class="card-actions"><button class="btn primary" type="button">收下</button></div>';
+      panel.querySelector(".ritual-card-image").innerHTML=svg;
+      panel.querySelector("button").addEventListener("click",async()=>{
+        try{await api(`/api/cards/${encodeURIComponent(card.id)}/dismiss`,{method:"POST"});await show(index+1);}
+        catch(e){toast("收下失败："+e.message,3500);}
+      });
+      root.replaceChildren(panel);panel.querySelector("button").focus();
+    };
+    await show(0);return true;
+  }catch(_){root.innerHTML="";return false;}
+}
 async function markRead(){
   try{const r=await api("/api/mark-read",{method:"POST",body:{bookId:state.bookId,chunkId:state.chunkId}});
     setMarkRead(true);
     const c=state.chunks.find(x=>x.id===state.chunkId);if(c)c.read=true;
     await loadBooks(true);renderShelf();
-    if(r.finish&&r.finish.celebration){toast("📖 "+(r.finish.celebration.title||"读完了！")+" — "+(r.finish.celebration.line||""),4500);}
-    else toast("这章读完了 ✓"+(state.nextId?"，去下一章 →":""));
+    const hasCard=await showRitualCards();
+    if(!hasCard&&r.finish&&r.finish.celebration){toast("📖 "+(r.finish.celebration.title||"读完了！")+" — "+(r.finish.celebration.line||""),4500);}
+    else if(!hasCard)toast("这章读完了 ✓"+(state.nextId?"，去下一章 →":""));
   }catch(e){toast("标记失败："+e.message,3500);}
 }
+// ==== BEAUTIFY-2026-07 · 设计系统桌面批 · end ====
 async function doContinue(){
   try{const n=await api(`/api/continue?bookId=${encodeURIComponent(state.bookId)}`);
     if(n.completed){toast("整本都读完啦 🎉");return;}

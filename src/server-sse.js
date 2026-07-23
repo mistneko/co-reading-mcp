@@ -47,10 +47,19 @@ function setAuthCookie(res, token) {
   );
 }
 
+// 常时比较，长度不等直接 false（timingSafeEqual 长度不等会抛）。空 token 场景由 authorized 的
+// fail-closed 前置守卫兜住，不会走到这里。
+function tokenEq(candidate) {
+  if (typeof candidate !== "string" || candidate.length !== authToken.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(candidate), Buffer.from(authToken));
+}
+
 function authorized(req, url) {
-  if (!authToken) return true;
-  if (req.headers.authorization === `Bearer ${authToken}`) return true;
-  if (url.searchParams.get("token") === authToken) return true;
+  // 未配置 token 时拒绝所有鉴权请求，确保 fail-closed。
+  if (!authToken) return false;
+  const _auth = req.headers.authorization || "";
+  if (_auth.startsWith("Bearer ") && tokenEq(_auth.slice(7))) return true;
+  if (tokenEq(url.searchParams.get("token"))) return true;
   // 审计 0719 🟡：畸形 cookie（如 co_reading_token=%）会让 decodeURIComponent 抛 URIError，
   // 而它抛在鉴权判断之前 → 冒泡到顶层 catch → 全站 500，连「报暗号」页都渲染不出来；
   // cookie 是 HttpOnly，用户在页内没有任何自救手段。解不开就当没带 cookie，自然掉进 401 暗号页。
@@ -60,7 +69,7 @@ function authorized(req, url) {
   } catch {
     return false;
   }
-  return cookieValue === authToken;
+  return tokenEq(cookieValue);
 }
 
 function externalBaseUrl(req) {
